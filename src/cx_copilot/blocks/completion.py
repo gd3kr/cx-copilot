@@ -1,0 +1,31 @@
+from typing import List, Optional
+
+import openai
+
+from ..exceptions.exceptions import MissingAPIKeyException
+
+
+class CompletionBlock:
+    def get_completion(self, prompt: str, max_tokens: int, temperature: int) -> str:
+        pass
+
+
+def check_key_decorator(func):
+    def wrapper(*args):
+        if args[0].open_ai_key is None:
+            raise MissingAPIKeyException('OpenAI API key is required for GPT Completion')
+        return func(*args)
+
+    return wrapper
+
+
+class GPTCompletionBlock(CompletionBlock):
+    open_ai_key: Optional[str] = None
+
+    def __init__(self, open_ai_key: str) -> None:
+        self.open_ai_key = open_ai_key
+        openai.api_key = open_ai_key
+
+    @check_key_decorator
+    def get_completion(self, prompt: str, max_tokens: int, temperature: int) -> str:
+       return openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=max_tokens,temperature=temperature).choices[0].text
