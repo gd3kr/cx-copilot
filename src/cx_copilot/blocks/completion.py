@@ -13,7 +13,7 @@ class CompletionBlock:
 def check_key_decorator(func):
     def wrapper(*args):
         if args[0].open_ai_key is None:
-            raise MissingAPIKeyException('OpenAI API key is required for GPT Completion')
+            raise MissingAPIKeyException('OpenAI API key is required for GPT-3 Completion')
         return func(*args)
 
     return wrapper
