@@ -24,7 +24,10 @@ class ConversationRepository:
 
 
 def _helpscout_thread_to_common(thread: Dict) -> Thread:
-    return Thread(body=thread['body'])
+    body = None
+    if hasattr(thread, 'body'):
+        body = thread.body
+    return Thread(body=body)
 
 
 class HelpscoutConversationRepository(ConversationRepository):
@@ -35,5 +38,5 @@ class HelpscoutConversationRepository(ConversationRepository):
 
     def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
         threads = self.helpscout.conversations[conversation_id].threads.get()
-        mapped = map(_helpscout_thread_to_common, threads)
+        mapped = list(map(_helpscout_thread_to_common, threads))
         return Conversation(threads=mapped)
