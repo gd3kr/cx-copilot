@@ -11,10 +11,10 @@ class EmbeddingBlock:
 
 
 def check_key_decorator(func):
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         if args[0].open_ai_key is None:
             raise MissingAPIKeyException('OpenAI API key is required for embeddings')
-        return func(*args)
+        return func(*args, **kwargs)
 
     return wrapper
 
