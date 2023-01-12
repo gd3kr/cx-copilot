@@ -24,15 +24,15 @@ class EmbeddingsResponseT:
 
 
 class VectorDBBlock:
-    def lookup(self, vector: List[int], index_name: str, top_k: int = 3) -> ClosestEmbeddingT:
+    def lookup(self, vector: List[int], index_name: str, top_k: int = 3) -> EmbeddingsResponseT:
         pass
 
 
 def check_key_decorator(func):
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         if args[0].api_key is None:
             raise MissingAPIKeyException('OpenAI API key is required for embeddings')
-        return func(*args)
+        return func(*args, **kwargs)
 
     return wrapper
 

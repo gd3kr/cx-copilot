@@ -7,6 +7,17 @@ from ..blocks.vectordb import VectorDBBlock, PineconeVectorDBBlock
 from ..blocks.completion import CompletionBlock, GPTCompletionBlock
 from ..blocks.embedding import EmbeddingBlock, OpenAIEmbeddingBlock
 
+_DEFAULT_PROMPT = 'You are a customer support agent. ' \
+                  'You are tasked with accurately answering the following ticket. ' \
+                  'You have answered similar questions in the past. \n' \
+                  'Q1: {matches[0].metadata[question]}\n A1: {matches[0].metadata[value]} \n' \
+                  '-----------------------------------\n' \
+                  'Q2:{matches[1].metadata[question]} ' \
+                  '\n A2:{matches[1].metadata[value]}' \
+                  'Q3: {ticket_body} \n' \
+                  'A3: '
+
+
 class CXCopilot:
     cache_block: Cache
     ticket_repo: ConversationRepository
@@ -62,6 +73,18 @@ class CXCopilot:
         if embedding_config['type'] == 'openai':
             key = embedding_config['key']
             self.embedding = OpenAIEmbeddingBlock(open_ai_key=key)
+
+    def get_ticket_response(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
+        content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
+        embedded_content = self.embedding.embed_text(content.threads[-1].body)
+        similar_tickets = self.vector_db.lookup(embedded_content, 'readwise')
+        prompt = _DEFAULT_PROMPT.format(matches=similar_tickets.ClosestEmbeddings, ticket_body=content)
+        completion = self.completion.get_completion(
+            prompt=prompt,
+            max_tokens=max_tokens,
+            temperature=0.7,
+        )
+        return completion
 
     def __init__(self, path='copilot_config.yml'):
         env = EnvYAML(path)
