@@ -2,10 +2,11 @@ from typing import Optional, Dict
 import redis
 from envyaml import EnvYAML
 from ..blocks.cache import Cache, RedisCache
-from ..blocks.tickets import ConversationRepository, HelpscoutConversationRepository
+from ..blocks.tickets import ConversationRepository, HelpscoutConversationRepository, IntercomConversationRepository
 from ..blocks.vectordb import VectorDBBlock, PineconeVectorDBBlock
 from ..blocks.completion import CompletionBlock, GPTCompletionBlock
 from ..blocks.embedding import EmbeddingBlock, OpenAIEmbeddingBlock
+from ..blocks.cleaner import clean_ticket
 
 _DEFAULT_PROMPT = 'You are a customer support agent. ' \
                   'You are tasked with accurately answering the following ticket. ' \
@@ -46,6 +47,10 @@ class CXCopilot:
             secret = ticket_config['secret']
             self.ticket_repo = HelpscoutConversationRepository(app_id=app_id, app_secret=secret)
 
+        elif ticket_config['type'] == 'intercom':
+            token = ticket_config['personal_access_token']
+            self.ticket_repo = IntercomConversationRepository(personal_access_token=token)
+
     def __init_vector_db__(self, yaml: EnvYAML):
         vector_config: Optional[Dict] = yaml.get('vectordb')
         if vector_config is None:
@@ -76,9 +81,10 @@ class CXCopilot:
 
     def get_ticket_response(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
         content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
-        embedded_content = self.embedding.embed_text(content.threads[-1].body)
+        cleaned = clean_ticket(content.threads[-1].body, self.ticket_repo)
+        embedded_content = self.embedding.embed_text(cleaned)
         similar_tickets = self.vector_db.lookup(embedded_content, 'readwise')
-        prompt = _DEFAULT_PROMPT.format(matches=similar_tickets.ClosestEmbeddings, ticket_body=content)
+        prompt = _DEFAULT_PROMPT.format(matches=similar_tickets.ClosestEmbeddings, ticket_body=cleaned)
         completion = self.completion.get_completion(
             prompt=prompt,
             max_tokens=max_tokens,
