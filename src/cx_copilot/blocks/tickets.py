@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import List, Dict, TypedDict
+import asyncio
+from typing import Dict, List, TypedDict
 
+import discord
 import intercom.client
 import zenpy
+from discord.utils import find
 from helpscout import HelpScout
 
 
@@ -18,9 +21,9 @@ class Thread:
 
 
 class Conversation:
-    threads: List[Thread]
+    threads: list[Thread]
 
-    def __init__(self, threads: List[Thread]):
+    def __init__(self, threads: list[Thread]):
         self.threads = threads
 
 
@@ -29,7 +32,7 @@ class ConversationRepository:
         raise NotImplementedError
 
 
-def _helpscout_thread_to_common(thread: Dict) -> Thread:
+def _helpscout_thread_to_common(thread: dict) -> Thread:
     body = None
     if hasattr(thread, "body"):
         body = thread.body
@@ -53,7 +56,7 @@ class IntercomConversationPart:
 
 
 class IntercomConversation:
-    conversation_parts: List[IntercomConversationPart]
+    conversation_parts: list[IntercomConversationPart]
 
 
 def _intercom_thread_to_common(thread: IntercomConversationPart) -> Thread:
@@ -65,6 +68,10 @@ def _intercom_thread_to_common(thread: IntercomConversationPart) -> Thread:
 
 def _zendesk_thread_to_common(thread: zenpy) -> Thread:
     return Thread(body=thread.body)
+
+
+def _discord_thread_to_common(message: discord.Message) -> Thread:
+    return Thread(body=message.content)
 
 
 class IntercomConversationRepository(ConversationRepository):
@@ -90,3 +97,25 @@ class ZendeskConversationRepository(ConversationRepository):
         comments = self.instance.tickets.comments(ticket=conversation_id)
         mapped = list(map(_zendesk_thread_to_common, comments))
         return Conversation(threads=mapped)
+
+
+class DiscordConversationRepository(ConversationRepository):
+    instance: discord.Client
+
+    def __init__(self, token: str):
+        intents = discord.Intents.none()
+        self.instance = discord.Client(intents)
+        self.instance.login(token=token)
+
+    async def _get_messages(self, thread: discord.Thread):
+        return [message async for message in thread.history(limit=50)]
+
+    def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+        guilds = self.instance.guilds
+        for guild in guilds:
+            thread = guild.get_channel_or_thread(conversation_id)
+            if thread.id == conversation_id:
+                messages = asyncio.get_event_loop().run_until_complete(self._get_messages(thread))
+                return Conversation(threads=list(map(_discord_thread_to_common, messages)))
+
+        return None
