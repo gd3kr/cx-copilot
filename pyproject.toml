@@ -31,7 +31,8 @@ dependencies=[
     "python-intercom~=3.1.0",
     "email_reply_parser~=0.5.12",
     "beautifulsoup4~=4.11.1",
-    "zenpy~=2.0.25"
+    "zenpy~=2.0.25",
+    "pre-commit~=2.21.0"
 ]
 
 [project.optional-dependencies]
