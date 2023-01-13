@@ -2,7 +2,8 @@ from typing import Optional, Dict
 import redis
 from envyaml import EnvYAML
 from ..blocks.cache import Cache, RedisCache
-from ..blocks.tickets import ConversationRepository, HelpscoutConversationRepository, IntercomConversationRepository
+from ..blocks.tickets import ConversationRepository, HelpscoutConversationRepository, IntercomConversationRepository, \
+    ZendeskConversationRepository
 from ..blocks.vectordb import VectorDBBlock, PineconeVectorDBBlock
 from ..blocks.completion import CompletionBlock, GPTCompletionBlock
 from ..blocks.embedding import EmbeddingBlock, OpenAIEmbeddingBlock
@@ -50,6 +51,13 @@ class CXCopilot:
         elif ticket_config['type'] == 'intercom':
             token = ticket_config['personal_access_token']
             self.ticket_repo = IntercomConversationRepository(personal_access_token=token)
+
+        elif ticket_config['type'] == 'zendesk':
+            token = ticket_config['token']
+            subdomain = ticket_config['subdomain']
+            email = ticket_config['email']
+            self.ticket_repo = ZendeskConversationRepository(subdomain=subdomain, email=email, token=token)
+
 
     def __init_vector_db__(self, yaml: EnvYAML):
         vector_config: Optional[Dict] = yaml.get('vectordb')

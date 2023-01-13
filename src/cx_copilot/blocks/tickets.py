@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import List, Dict, TypedDict
 
 import intercom.client
+import zenpy
 from helpscout import HelpScout
 
 
@@ -61,6 +62,9 @@ def _intercom_thread_to_common(thread: IntercomConversationPart) -> Thread:
     return Thread(body=body)
 
 
+def _zendesk_thread_to_common(thread: zenpy) -> Thread:
+    return Thread(body=thread.body)
+
 class IntercomConversationRepository(ConversationRepository):
     instance: intercom.client.Client
 
@@ -72,3 +76,14 @@ class IntercomConversationRepository(ConversationRepository):
         mapped = list(map(_intercom_thread_to_common, thread.conversation_parts))
         mapped.append(Thread(body=thread.source.body))
         return Conversation(threads=mapped)
+
+class ZendeskConversationRepository(ConversationRepository):
+    instance: zenpy.Zenpy
+    def __init__(self, subdomain: str, email: str, token: str):
+        self.instance = zenpy.Zenpy(subdomain=subdomain, email=email, token=token)
+
+    def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+        comments = self.instance.tickets.comments(ticket=conversation_id)
+        mapped = list(map(_zendesk_thread_to_common, comments))
+        return Conversation(threads=mapped)
+

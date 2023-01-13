@@ -9,3 +9,4 @@ def clean_ticket(ticket_body: str, ticket_provider) -> str:
         html_parsed = EmailReplyParser.parse_reply(BeautifulSoup(ticket_body, "html.parser").text)
         return html_parsed
 
+    return ticket_body
