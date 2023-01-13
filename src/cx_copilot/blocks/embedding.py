@@ -13,7 +13,7 @@ class EmbeddingBlock:
 def check_key_decorator(func):
     def wrapper(*args, **kwargs):
         if args[0].open_ai_key is None:
-            raise MissingAPIKeyException('OpenAI API key is required for embeddings')
+            raise MissingAPIKeyException("OpenAI API key is required for embeddings")
         return func(*args, **kwargs)
 
     return wrapper
@@ -28,12 +28,12 @@ class OpenAIEmbeddingBlock(EmbeddingBlock):
     @check_key_decorator
     def embed_text(self, text: str) -> List[int]:
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.open_ai_key}',
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.open_ai_key}",
         }
         json_data = {
-            'input': text,
-            'model': 'text-embedding-ada-002',
+            "input": text,
+            "model": "text-embedding-ada-002",
         }
-        response = requests.post('https://api.openai.com/v1/embeddings', headers=headers, json=json_data)
-        return response.json()['data'][0]['embedding']
+        response = requests.post("https://api.openai.com/v1/embeddings", headers=headers, json=json_data)
+        return response.json()["data"][0]["embedding"]

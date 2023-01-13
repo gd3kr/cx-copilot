@@ -10,5 +10,5 @@ from cx_copilot import OpenAIEmbeddingBlock, PineconeVectorDBBlock, GPTCompletio
 # print(cache.put('test', 'result'))
 # print(cache.get('test'))
 # print(CXCopilot().cache_block.get('test'))
-print(CXCopilot().ticket_repo.get_conversation_by_id('2').threads[-1])
-print(CXCopilot().get_ticket_response('2'))
+print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
+print(CXCopilot().get_ticket_response("3"))

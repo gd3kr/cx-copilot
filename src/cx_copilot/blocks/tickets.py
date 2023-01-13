@@ -16,6 +16,7 @@ class Thread:
     def __repr__(self):
         return f"{self.body}"
 
+
 class Conversation:
     threads: List[Thread]
 
@@ -30,7 +31,7 @@ class ConversationRepository:
 
 def _helpscout_thread_to_common(thread: Dict) -> Thread:
     body = None
-    if hasattr(thread, 'body'):
+    if hasattr(thread, "body"):
         body = thread.body
     return Thread(body=body)
 
@@ -57,13 +58,14 @@ class IntercomConversation:
 
 def _intercom_thread_to_common(thread: IntercomConversationPart) -> Thread:
     body = None
-    if hasattr(thread, 'body'):
+    if hasattr(thread, "body"):
         body = thread.body
     return Thread(body=body)
 
 
 def _zendesk_thread_to_common(thread: zenpy) -> Thread:
     return Thread(body=thread.body)
+
 
 class IntercomConversationRepository(ConversationRepository):
     instance: intercom.client.Client
@@ -77,8 +79,10 @@ class IntercomConversationRepository(ConversationRepository):
         mapped.append(Thread(body=thread.source.body))
         return Conversation(threads=mapped)
 
+
 class ZendeskConversationRepository(ConversationRepository):
     instance: zenpy.Zenpy
+
     def __init__(self, subdomain: str, email: str, token: str):
         self.instance = zenpy.Zenpy(subdomain=subdomain, email=email, token=token)
 
@@ -86,4 +90,3 @@ class ZendeskConversationRepository(ConversationRepository):
         comments = self.instance.tickets.comments(ticket=conversation_id)
         mapped = list(map(_zendesk_thread_to_common, comments))
         return Conversation(threads=mapped)
-
