@@ -31,14 +31,14 @@ class VectorDBBlock:
 def check_key_decorator(func):
     def wrapper(*args, **kwargs):
         if args[0].api_key is None:
-            raise MissingAPIKeyException('OpenAI API key is required for embeddings')
+            raise MissingAPIKeyException("OpenAI API key is required for embeddings")
         return func(*args, **kwargs)
 
     return wrapper
 
 
 def _pinecone_match_to_common(pinecone_match) -> ClosestEmbeddingT:
-    return ClosestEmbeddingT(score=pinecone_match['score'], metadata=pinecone_match['metadata'])
+    return ClosestEmbeddingT(score=pinecone_match["score"], metadata=pinecone_match["metadata"])
 
 
 class PineconeVectorDBBlock(VectorDBBlock):
@@ -57,8 +57,8 @@ class PineconeVectorDBBlock(VectorDBBlock):
             top_k=top_k,
             include_metadata=True,
         )
-        if response is None or 'matches' not in response:
+        if response is None or "matches" not in response:
             return None
 
-        closest = list(map(_pinecone_match_to_common, response['matches']))
+        closest = list(map(_pinecone_match_to_common, response["matches"]))
         return EmbeddingsResponseT(embeddings=closest)
