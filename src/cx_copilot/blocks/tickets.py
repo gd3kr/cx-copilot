@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import List, Dict
+from typing import List, Dict, TypedDict
+
+import intercom.client
 from helpscout import HelpScout
 
 
@@ -10,6 +12,8 @@ class Thread:
     def __init__(self, body: str):
         self.body = body
 
+    def __repr__(self):
+        return f"{self.body}"
 
 class Conversation:
     threads: List[Thread]
@@ -39,4 +43,32 @@ class HelpscoutConversationRepository(ConversationRepository):
     def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
         threads = self.helpscout.conversations[conversation_id].threads.get()
         mapped = list(map(_helpscout_thread_to_common, threads))
+        return Conversation(threads=mapped)
+
+
+class IntercomConversationPart:
+    body: str
+
+
+class IntercomConversation:
+    conversation_parts: List[IntercomConversationPart]
+
+
+def _intercom_thread_to_common(thread: IntercomConversationPart) -> Thread:
+    body = None
+    if hasattr(thread, 'body'):
+        body = thread.body
+    return Thread(body=body)
+
+
+class IntercomConversationRepository(ConversationRepository):
+    instance: intercom.client.Client
+
+    def __init__(self, personal_access_token):
+        self.instance = intercom.client.Client(personal_access_token=personal_access_token)
+
+    def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+        thread: IntercomConversation = self.instance.conversations.find(id=conversation_id)
+        mapped = list(map(_intercom_thread_to_common, thread.conversation_parts))
+        mapped.append(Thread(body=thread.source.body))
         return Conversation(threads=mapped)
