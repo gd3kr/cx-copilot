@@ -8,10 +8,10 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "pilotemoji.png"
+    "default_icon": "icon-128.png"
   },
   "icons": {
-    "128": "pilotemoji.png"
+    "128": "icon-128.png"
   },
   "permissions": [
     "tabs",
@@ -37,7 +37,7 @@
     {
       "resources": [
         "content.styles.css",
-        "pilotemoji.png"
+        "logo.svg"
       ],
       "matches": []
     }

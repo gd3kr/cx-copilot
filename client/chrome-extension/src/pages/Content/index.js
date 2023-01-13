@@ -1,4 +1,8 @@
-function getIDsandInsertReply(currentURL) {
+const HELPSCOUT_DOMAIN = "helpscout.net"
+const INTERCOM_DOMAIN = "intercom.com"
+const ZENDESK_DOMAIN = "zendesk.com"
+
+function scrapeTicketData(currentURL) {
     console.log("Hello from CX Copilot", currentURL)
 
     // https://secure.helpscout.net/conversation/2199011258/891142?folderId=39835
@@ -19,7 +23,7 @@ function getIDsandInsertReply(currentURL) {
         // console.log("threadID ", threadID)
         // console.log("folderID ", folderID)
 
-        insertReply(conversationID);
+        insertReply(currentURL, conversationID);
     }
 }
 
@@ -28,21 +32,25 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.message === 'TabUpdated') {
             let currentURL = request.url;
-            getIDsandInsertReply(currentURL);
+            scrapeTicketData(currentURL);
         }
     });
 
-getIDsandInsertReply(window.location.toString());
+scrapeTicketData(window.location.toString());
 
-async function insertReply(conversationID) {
+async function insertReply(currentURL, conversationID) {
     const url = 'YOUR SERVER URL';
+
+    const cxPlatform = getCXPlatformName(currentURL);
+    console.log("CX platform", cxPlatform)
     const httpResponse = await fetch(url, {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        method: 'POST', 
         headers: new Headers({ 'content-type': 'application/json' }),
         body: JSON.stringify({
             conversation_id: new Number(conversationID),
-            use_cached: true
-        }) // body data type must match "Content-Type" header
+            use_cached: true,
+            cx_platform: cxPlatform
+        })
     });
     const responseBody = await httpResponse.json()
 
@@ -57,3 +65,21 @@ async function insertReply(conversationID) {
         document.getElementsByClassName("redactor_redactor redactor_editor")[0].innerText = response.trim()
     }, 500)
 }
+
+function getCXPlatformName(url){
+    if (url.split(HELPSCOUT_DOMAIN).length > 1) {
+        return 'helpscout'
+    }
+
+    if (url.split(INTERCOM_DOMAIN).length > 1) {
+        return 'intercom'
+    }
+
+    if (url.split(ZENDESK_DOMAIN).length > 1) {
+        return 'zendesk'
+    }
+    
+    return 'not_supported'
+}
+
+// [...document.getElementsByClassName("intercom-interblocks-align-left embercom-prosemirror-composer-block-selected")][0].innerText = "yo"
