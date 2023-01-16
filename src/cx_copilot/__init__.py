@@ -6,4 +6,4 @@ from .blocks.completion import GPTCompletionBlock
 from .blocks.cache import RedisCache
 from .compound.compound import CXCopilot
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"

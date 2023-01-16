@@ -3,9 +3,9 @@ requires = ["flit"]
 build-backend = "flit.buildapi"
 
 [project]
-name =  "py-project-toml"
+name =  "cx-copilot"
 authors = [
-    {name = "Daniel Ciborowski", email = "dciborow@microsoft.com"},
+    {name = "Rahul S, Tanuj Tiwari", email = "eng@livetrucks.io"},
 ]
 description = "Sample Python Project for creating a new Python Module"
 readme = "README.md"
@@ -59,9 +59,9 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/microsoft/python-package-template/tree/main#readme"
-Source = "https://github.com/microsoft/python-package-template"
-Tracker = "https://github.com/microsoft/python-package-template/issues"
+Documentation = "https://github.com/caesarhq"
+Source = "https://github.com/caesarhq"
+Tracker = "https://github.com/caesarhq"
 
 [tool.flit.module]
 name = "cx_copilot"
