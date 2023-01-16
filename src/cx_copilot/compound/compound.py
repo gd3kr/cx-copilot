@@ -103,6 +103,13 @@ class CXCopilot:
 
     def get_ticket_response(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
         content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
+        if use_cached:
+            try:
+                value = self.cache_block.get(ticket_id)
+                if value is not None:
+                    return value
+            except Exception:
+                pass
         cleaned = clean_ticket(content.threads[-1].body, self.ticket_repo)
         embedded_content = self.embedding.embed_text(cleaned)
         similar_tickets = self.vector_db.lookup(embedded_content, "readwise")
@@ -112,6 +119,8 @@ class CXCopilot:
             max_tokens=max_tokens,
             temperature=0.7,
         )
+        if cache_response:
+            self.cache_block.put(ticket_id, completion)
         return completion
 
     def __init__(self, path="copilot_config.yml"):

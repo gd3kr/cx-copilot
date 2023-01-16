@@ -4,10 +4,13 @@ import asyncio
 from typing import Dict, List, TypedDict
 
 import discord
+import hikari
 import intercom.client
 import zenpy
 from discord.utils import find
 from helpscout import HelpScout
+
+DISCORD_BASE_URL = "https://discordapp.com/api/"
 
 
 class Thread:
@@ -70,10 +73,6 @@ def _zendesk_thread_to_common(thread: zenpy) -> Thread:
     return Thread(body=thread.body)
 
 
-def _discord_thread_to_common(message: discord.Message) -> Thread:
-    return Thread(body=message.content)
-
-
 class IntercomConversationRepository(ConversationRepository):
     instance: intercom.client.Client
 
@@ -99,23 +98,41 @@ class ZendeskConversationRepository(ConversationRepository):
         return Conversation(threads=mapped)
 
 
+class DiscordMessage(TypedDict):
+    content: str
+
+
+def _discord_thread_to_common(message: DiscordMessage) -> Thread:
+    return Thread(body=message["content"])
+
+
 class DiscordConversationRepository(ConversationRepository):
-    instance: discord.Client
+    instance: hikari.RESTApp
+    token: str
 
     def __init__(self, token: str):
-        intents = discord.Intents.none()
-        self.instance = discord.Client(intents)
-        self.instance.login(token=token)
-
-    async def _get_messages(self, thread: discord.Thread):
-        return [message async for message in thread.history(limit=50)]
+        self.token = token
 
     def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
-        guilds = self.instance.guilds
-        for guild in guilds:
-            thread = guild.get_channel_or_thread(conversation_id)
-            if thread.id == conversation_id:
-                messages = asyncio.get_event_loop().run_until_complete(self._get_messages(thread))
-                return Conversation(threads=list(map(_discord_thread_to_common, messages)))
+        import requests
+
+        url = f"{DISCORD_BASE_URL}/channels/{conversation_id}/messages"
+
+        payload = {}
+        headers = {
+            "Authorization": f"Bot {self.token}",
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        parsed = response.json()
+        mapped = list(map(_discord_thread_to_common, parsed))
+        mapped.reverse()
+        return Conversation(threads=mapped)
+        # for guild in guilds:
+        #     thread = guild.get_channel_or_thread(conversation_id)
+        #     if thread.id == conversation_id:
+        #         messages = asyncio.get_event_loop().run_until_complete(self._get_messages(thread))
+        #         return Conversation(threads=list(map(_discord_thread_to_common, messages)))
 
         return None
