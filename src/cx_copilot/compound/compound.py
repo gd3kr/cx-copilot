@@ -1,17 +1,22 @@
-from typing import Optional, Dict
+from __future__ import annotations
+
+from typing import Dict, Optional
+
 import redis
 from envyaml import EnvYAML
+
 from ..blocks.cache import Cache, RedisCache
+from ..blocks.cleaner import clean_ticket
+from ..blocks.completion import CompletionBlock, GPTCompletionBlock
+from ..blocks.embedding import EmbeddingBlock, OpenAIEmbeddingBlock
 from ..blocks.tickets import (
     ConversationRepository,
+    DiscordConversationRepository,
     HelpscoutConversationRepository,
     IntercomConversationRepository,
     ZendeskConversationRepository,
 )
-from ..blocks.vectordb import VectorDBBlock, PineconeVectorDBBlock
-from ..blocks.completion import CompletionBlock, GPTCompletionBlock
-from ..blocks.embedding import EmbeddingBlock, OpenAIEmbeddingBlock
-from ..blocks.cleaner import clean_ticket
+from ..blocks.vectordb import PineconeVectorDBBlock, VectorDBBlock
 
 _DEFAULT_PROMPT = (
     "You are a customer support agent. "
@@ -34,7 +39,7 @@ class CXCopilot:
     completion: CompletionBlock
 
     def __init_cache__(self, yaml: EnvYAML):
-        cache_config: Optional[Dict] = yaml.get("cache")
+        cache_config: dict | None = yaml.get("cache")
         if cache_config is None:
             return
 
@@ -45,7 +50,7 @@ class CXCopilot:
             self.cache_block = RedisCache(host=host, port=port, db=db)
 
     def __init_ticket_repo__(self, yaml: EnvYAML):
-        ticket_config: Optional[Dict] = yaml.get("ticketing")
+        ticket_config: dict | None = yaml.get("ticketing")
         if ticket_config is None:
             return
 
@@ -64,8 +69,12 @@ class CXCopilot:
             email = ticket_config["email"]
             self.ticket_repo = ZendeskConversationRepository(subdomain=subdomain, email=email, token=token)
 
+        elif ticket_config["type"] == "discord":
+            token = ticket_config["token"]
+            self.ticket_repo = DiscordConversationRepository(token=token)
+
     def __init_vector_db__(self, yaml: EnvYAML):
-        vector_config: Optional[Dict] = yaml.get("vectordb")
+        vector_config: dict | None = yaml.get("vectordb")
         if vector_config is None:
             return
 
@@ -75,7 +84,7 @@ class CXCopilot:
             self.vector_db = PineconeVectorDBBlock(key=key, environment=env)
 
     def __init_completion__(self, yaml: EnvYAML):
-        completion_config: Optional[Dict] = yaml.get("completion")
+        completion_config: dict | None = yaml.get("completion")
         if completion_config is None:
             return
 
@@ -84,7 +93,7 @@ class CXCopilot:
             self.completion = GPTCompletionBlock(open_ai_key=key)
 
     def __init_embedding__(self, yaml: EnvYAML):
-        embedding_config: Optional[Dict] = yaml.get("embedding")
+        embedding_config: dict | None = yaml.get("embedding")
         if embedding_config is None:
             return
 
@@ -94,6 +103,13 @@ class CXCopilot:
 
     def get_ticket_response(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
         content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
+        if use_cached:
+            try:
+                value = self.cache_block.get(ticket_id)
+                if value is not None:
+                    return value
+            except Exception:
+                pass
         cleaned = clean_ticket(content.threads[-1].body, self.ticket_repo)
         embedded_content = self.embedding.embed_text(cleaned)
         similar_tickets = self.vector_db.lookup(embedded_content, "readwise")
@@ -103,6 +119,8 @@ class CXCopilot:
             max_tokens=max_tokens,
             temperature=0.7,
         )
+        if cache_response:
+            self.cache_block.put(ticket_id, completion)
         return completion
 
     def __init__(self, path="copilot_config.yml"):

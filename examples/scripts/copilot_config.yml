@@ -1,0 +1,27 @@
+#cache:
+#  type: redis
+#  host: localhost
+#  port: 6379
+#  db: 0
+
+ticketing:
+  type: zendesk
+  subdomain: livetrucks
+  token: $ZENDESK_TOKEN
+  email: tanuj@livetrucks.io
+#  personal_access_token: $INTERCOM_TOKEN
+#  app_id: $HELPSCOUT_APP_ID
+#  secret: $HELPSCOUT_APP_SECRET
+
+completion:
+  type: openai
+  key: $OPEN_AI_KEY
+
+vectordb:
+  type: 'pinecone'
+  key: $PINECONE_KEY
+  environment: 'us-west1-gcp'
+
+embedding:
+  type: openai
+  key: $OPEN_AI_KEY
