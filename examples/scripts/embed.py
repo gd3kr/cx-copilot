@@ -1,4 +1,6 @@
-from cx_copilot import OpenAIEmbeddingBlock, PineconeVectorDBBlock, GPTCompletionBlock, RedisCache, CXCopilot
+from __future__ import annotations
+
+from cx_copilot import CXCopilot, GPTCompletionBlock, OpenAIEmbeddingBlock, PineconeVectorDBBlock, RedisCache
 
 # op = OpenAIEmbeddingBlock(open_ai_key='YOUR_OPEN_AI_KEY')
 # vec = op.embed_text('hello, please help me reset my account password')
@@ -11,4 +13,4 @@ from cx_copilot import OpenAIEmbeddingBlock, PineconeVectorDBBlock, GPTCompletio
 # print(cache.get('test'))
 # print(CXCopilot().cache_block.get('test'))
 print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
-print(CXCopilot().get_ticket_response("3"))
+print(CXCopilot().get_ticket_response_using_hyde("3", use_cached=False, cache_response=False))
