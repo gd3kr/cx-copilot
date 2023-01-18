@@ -33,7 +33,8 @@ dependencies=[
     "beautifulsoup4~=4.11.1",
     "zenpy~=2.0.25",
     "pre-commit~=2.21.0",
-    "hikari~=2.0.0.dev115"
+    "hikari~=2.0.0.dev115",
+    "Flask~=2.0.2",
 ]
 
 [project.optional-dependencies]
