@@ -30,6 +30,13 @@ _DEFAULT_PROMPT = (
     "A3: "
 )
 
+_HYDE_PROMPT = (
+    "You are a customer support agent. "
+    "You are tasked with accurately answering the following ticket. "
+    "Q: {ticket_body} \n"
+    "A: "
+)
+
 
 class CXCopilot:
     cache_block: Cache
@@ -113,6 +120,38 @@ class CXCopilot:
         cleaned = clean_ticket(content.threads[-1].body, self.ticket_repo)
         embedded_content = self.embedding.embed_text(cleaned)
         similar_tickets = self.vector_db.lookup(embedded_content, "readwise")
+        prompt = _DEFAULT_PROMPT.format(matches=similar_tickets.ClosestEmbeddings, ticket_body=cleaned)
+        completion = self.completion.get_completion(
+            prompt=prompt,
+            max_tokens=max_tokens,
+            temperature=0.7,
+        )
+        if cache_response:
+            self.cache_block.put(ticket_id, completion)
+        return completion
+
+    def get_ticket_response_using_hyde(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
+        # cache lookup first
+        content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
+        if use_cached:
+            try:
+                value = self.cache_block.get(ticket_id)
+                if value is not None:
+                    return value
+            except Exception:
+                pass
+        # clean step
+        cleaned = clean_ticket(content.threads[-1].body, self.ticket_repo)
+
+        # hyde step
+        hyde_prompt = _HYDE_PROMPT.format(ticket_body=cleaned)
+        hyde_fictions_answer = self.completion.get_completion(hyde_prompt, max_tokens=max_tokens, temperature=0.7)
+
+        # embedding step
+        embedded_content = self.embedding.embed_text(hyde_fictions_answer)
+        similar_tickets = self.vector_db.lookup(embedded_content, "readwise")
+
+        # final completion step
         prompt = _DEFAULT_PROMPT.format(matches=similar_tickets.ClosestEmbeddings, ticket_body=cleaned)
         completion = self.completion.get_completion(
             prompt=prompt,
