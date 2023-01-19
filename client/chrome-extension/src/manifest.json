@@ -41,5 +41,13 @@
       ],
       "matches": []
     }
-  ]
+  ],
+ "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+Y"
+      }
+    }
+  }
 }
