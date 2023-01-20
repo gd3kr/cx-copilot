@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener(
 );
 
 async function insertReply(currentURL, conversationID, platform) {
-    const url = 'https://support-bef.onrender.com/get_auto_response';
+    const url = 'YOUR_BE_URL';
 
     const httpResponse = await fetch(url, {
         method: 'POST',
