@@ -6,7 +6,7 @@ const INTERCOM_REPLY_TEXTBOX_CLASSNAME = "intercom-interblocks-align-left emberc
 const HELPSCOUT_REPLY_BUTTON_CLASSNAME = "navReply"
 const HELPSCOUT_REPLY_TEXTBOX_CLASSNAME = "redactor_redactor redactor_editor"
 
-function scrapeTicketData(currentURL) {
+async function scrapeTicketData(currentURL) {
     console.log("Hello from CX Copilot", currentURL)
 
     const platform = getCXPlatformName(currentURL);
@@ -19,31 +19,40 @@ function scrapeTicketData(currentURL) {
 
     if (platform == 'helpscout') {
         ticketID = scrapeHelpscout(currentURL);
-        insertReply(currentURL, ticketID, platform);
+        const response = await insertReply(currentURL, ticketID, platform);
+        return response
     }
 
     if (platform == 'intercom') {
         ticketID = scrapeIntercom(currentURL);
     }
-    
 }
 
-// Listen for Tab Updated
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.message === 'TabUpdated') {
-            let currentURL = request.url;
-            scrapeTicketData(currentURL);
-        }
-    });
+// // Listen for Tab Updated
+// chrome.runtime.onMessage.addListener(
+//     function (request, sender, sendResponse) {
+//         if (request.message === 'TabUpdated') {
+//             let currentURL = request.url;
+//             scrapeTicketData(currentURL);
+//         }
+//     });
 
-scrapeTicketData(window.location.toString());
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        console.log(request)
+        if (request.type == 'inject') {
+            scrapeTicketData(document.location.href).then((res) => sendResponse(res))
+        }
+
+        return true;
+    }
+);
 
 async function insertReply(currentURL, conversationID, platform) {
-    const url = 'YOUR SERVER URL';
+    const url = 'YOUR_SOURCE_URL';
 
     const httpResponse = await fetch(url, {
-        method: 'POST', 
+        method: 'POST',
         headers: new Headers({ 'content-type': 'application/json' }),
         body: JSON.stringify({
             conversation_id: new Number(conversationID),
@@ -63,6 +72,8 @@ async function insertReply(currentURL, conversationID, platform) {
         let response = responseBody.completion
         injectHelpscoutReply(response.trim())
     }, 500)
+
+    return responseBody;
 }
 
 function getCXPlatformName(url){
@@ -77,7 +88,7 @@ function getCXPlatformName(url){
     if (url.split(ZENDESK_DOMAIN).length > 1) {
         return 'zendesk'
     }
-    
+
     return 'not_supported'
 }
 
