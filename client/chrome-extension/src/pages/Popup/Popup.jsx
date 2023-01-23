@@ -5,13 +5,16 @@ import './Popup.css';
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import {LightTheme, BaseProvider, styled, DarkTheme, useStyletron} from 'baseui';
-import {HeadingMedium, HeadingSmall, HeadingXSmall, ParagraphMedium} from "baseui/typography";
+import {HeadingMedium, HeadingSmall, HeadingXSmall, ParagraphMedium, ParagraphSmall} from "baseui/typography";
 import {DIVIDER} from "baseui/table-semantic";
 import {Block} from "baseui/block";
 import {StyledDivider} from "baseui/divider";
 import {Accordion, Panel} from "baseui/accordion";
 import {ProgressBar} from "baseui/progress-bar";
 import {LoadingSpinner} from "baseui/button/styled-components";
+import {Button} from "baseui/button";
+import {Checkmark} from "baseui/checkbox/styled-components";
+import {Check, Delete} from "baseui/icon";
 
 const PopupContent = (props) => {
     const {isLoading, summary, citations} = props;
@@ -24,11 +27,19 @@ const PopupContent = (props) => {
 
   return (
       <Block width={"100%"} height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
-      <HeadingXSmall color={theme.colors.primary}>
+      <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>
           CX Copilot
       </HeadingXSmall>
           {isLoading ? <ParagraphMedium>Loading response for the ticket</ParagraphMedium>:
-          <Accordion>
+              (
+                  <React.Fragment>
+          <Accordion overrides={{
+              Root: {
+                  style: {
+                      marginBottom: theme.sizing.scale600,
+                  }
+              }
+          }}>
               <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{summary}</ParagraphMedium></Panel>
                   <Panel overrides={{
                     PanelContainer: {
@@ -37,8 +48,25 @@ const PopupContent = (props) => {
                         }
                     }
                   }} title="Citations"><ParagraphMedium>{citations}</ParagraphMedium></Panel>
-            </Accordion>}
-          <StyledDivider />
+            </Accordion>
+              <StyledDivider $style={{color: theme.colors.primary}}/>
+        <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
+            <ParagraphSmall>
+                Did we answer the ticket?
+            </ParagraphSmall>
+            <Block>
+                <Check size={30} style={{
+                    color: theme.colors.primary,
+                    marginRight: theme.sizing.scale300,
+                }}/>
+                   <Delete size={30} style={{
+                    color: theme.colors.primary,
+                }}/>
+            </Block>
+        </Block>
+                      </React.Fragment>
+              )}
+
       </Block>
   );
 

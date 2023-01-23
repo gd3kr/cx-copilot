@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener(
 );
 
 async function insertReply(currentURL, conversationID, platform) {
-    const url = 'YOUR_BE_URL';
+    const url = 'YOUR_URL';
     const httpResponse = await fetch(url, {
         method: 'POST',
         headers: new Headers({ 'content-type': 'application/json' }),
