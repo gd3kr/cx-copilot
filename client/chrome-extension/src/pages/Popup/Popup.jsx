@@ -82,10 +82,12 @@ const PopupContent = (props) => {
                     <Panel overrides={{
                         PanelContainer: {
                             style: {
-                                maxHeight: '400px',
+                                maxHeight: '200px',
                             }
                         }
-                    }} title="Citations"><ParagraphMedium>{citations}</ParagraphMedium></Panel>
+                    }} title="Citations"><ParagraphMedium $style={{
+                        overflow: 'hidden',
+                    }}>{citations}</ParagraphMedium></Panel>
                 </Accordion>
                 <StyledDivider $style={{color: theme.colors.primary}}/>
             <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>

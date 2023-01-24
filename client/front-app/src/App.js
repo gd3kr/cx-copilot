@@ -1,11 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
 import {useFrontContext} from "./providers/frontContextProvider";
-import {PluginLayout} from "@frontapp/ui-kit";
+import {Accordion, AccordionSection, PluginFooter, PluginHeader, PluginLayout} from "@frontapp/ui-kit";
+import {useEffect, useState} from "react";
 
 function App() {
   const context = useFrontContext();
-
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   if (!context)
     return (
       <div className="App">
@@ -22,11 +23,15 @@ function App() {
       );
     case 'singleConversation':
       return (
-          <PluginLayout>
-        <div className="App">
-          Hello
-        </div>
+
+          <div className="App-sidebar">
+          <PluginLayout >
+          <PluginHeader>
+              CX-Copilot
+          </PluginHeader>
+              <SingleConversationAutoResponse />
             </PluginLayout>
+              </div>
       );
     case 'multiConversations':
       return (
@@ -40,4 +45,40 @@ function App() {
   };
 }
 
+const SingleConversationAutoResponse = () => {
+   const context = useFrontContext();
+  const [open, setIsOpen] = useState(true);
+  const [messages, setMessages] = useState([]);
+  useEffect(() => {
+      context.listMessages().then(({results}) => {setMessages(messages)});
+  }
+  , [context])
+
+    useEffect(() => {
+        if (messages.length == 0) {
+            return
+        }
+
+        context.createDraft({
+          content: {
+              body: 'Hello world',
+              type: 'text'
+          },
+          replyOptions: {
+              type: 'replyAll', // Or 'replyAll'
+              originalMessageId: messages[0].id,
+          }
+      })
+    }, [messages])
+   return <div className="App-sidebar-body">
+    <Accordion>
+        <AccordionSection isOpen={open} onSectionToggled={setIsOpen} id={1} title={'Summary'}>
+            summary goes here
+        </AccordionSection>
+        <AccordionSection id={2} title={'Citations'}>
+            citations go here
+        </AccordionSection>
+    </Accordion>
+   </div>
+}
 export default App;
