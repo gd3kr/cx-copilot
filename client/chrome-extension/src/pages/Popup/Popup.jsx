@@ -33,15 +33,6 @@ const PopupContent = (props) => {
 
      const scoreSuggestion = async (score) => {
 
-        console.log({
-            ticket_id: ticketId,
-            client_id: clientId,
-            completion: completion,
-            pipeline_id: pipelineId,
-            version: version,
-            score: score,
-        })
-
         const url = 'YOUR_URL';
         fetch(url, {
             method: 'POST',
