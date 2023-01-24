@@ -14,3 +14,4 @@ from cx_copilot import CXCopilot, GPTCompletionBlock, OpenAIEmbeddingBlock, Pine
 # print(CXCopilot().cache_block.get('test'))
 print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
 print(CXCopilot().get_ticket_response_using_hyde("3", use_cached=False, cache_response=False))
+print()

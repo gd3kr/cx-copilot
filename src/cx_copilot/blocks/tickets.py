@@ -142,6 +142,10 @@ class FrontMessage(TypedDict):
     body: str
 
 
+def _front_message_to_common(message: FrontMessage) -> Thread:
+    return Thread(body=message["body"])
+
+
 class FrontConversationRepository(ConversationRepository):
     token: str
 
@@ -154,3 +158,4 @@ class FrontConversationRepository(ConversationRepository):
 
         response = requests.get(url, headers=headers)
         parsed = response.json()
+        return Conversation(threads=map(lambda message: _front_message_to_common(message), parsed))
