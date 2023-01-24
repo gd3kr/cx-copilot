@@ -24,10 +24,27 @@ import {Checkmark} from "baseui/checkbox/styled-components";
 import {Check, Delete} from "baseui/icon";
 import {FormControl} from "baseui/form-control";
 import {Input} from "baseui/input";
+import {toaster, ToasterContainer} from "baseui/toast";
+import {PLACEMENT} from "baseui/badge";
 
 
 const PopupContent = (props) => {
-    const {isLoading, summary, citations, scoreSuggestion} = props;
+     const scoreSuggestion = async (score) => {
+        const url = 'YOUR_URL';
+        fetch(url, {
+            method: 'POST',
+            headers: new Headers({ 'content-type': 'application/json' }),
+            body: JSON.stringify({
+                ticket_id: ticketId,
+                client_id: clientId,
+                completion: completion,
+                pipeline_id: pipelineId,
+                version: version,
+                score: score
+            })
+        })
+    };
+    const {isLoading, summary, citations} = props;
     const [clientId, setClientId] = useState(null);
     const [inputClientId, setInputClientId] = useState(null);
     const [,theme] = useStyletron()
@@ -75,17 +92,14 @@ const PopupContent = (props) => {
                 <ParagraphSmall>
                     Did we answer the ticket?
                 </ParagraphSmall>
-                <Block onClick={async () => { await scoreSuggestion(1) }}>
-                    <Check size={30} style={{
+                    <Check onClick={() => scoreSuggestion(1)}  size={30} style={{
                         color: theme.colors.primary,
-                        marginRight: theme.sizing.scale300,
+                        cursor: "pointer",
                     }}/>
-                </Block>
-                <Block onClick={async () => { await scoreSuggestion(0) }}>
-                    <Delete size={30} style={{
+                    <Delete onClick={() => scoreSuggestion(0)}  size={30} style={{
                         color: theme.colors.primary,
+                        cursor: "pointer",
                     }}/>
-                </Block>
             </Block>
                         </React.Fragment>
                 ):
@@ -120,21 +134,7 @@ const Popup = () => {
     const [pipelineId, setPipelineId] = useState(null);
     const [version, setVersion] = useState(null);
 
-    const scoreSuggestion = async (score) => {
-        const url = 'YOUR_URL';
-        await fetch(url, {
-            method: 'POST',
-            headers: new Headers({ 'content-type': 'application/json' }),
-            body: JSON.stringify({
-                ticket_id: ticketId,
-                client_id: clientId,
-                completion: completion,
-                pipeline_id: pipelineId,
-                version: version,
-                score: score
-            })
-        });
-    };
+
 
     useEffect(() => {
         const func = () => {
@@ -144,7 +144,7 @@ const Popup = () => {
                     setIsLoading(false)
                     setSummary(response.summary)
                     setCitations(response.citations)
-                    
+
                     setTicketId(response.ticketId)
                     setClientId(response.clientId)
                     setCompletion(response.completion)
@@ -162,7 +162,7 @@ const Popup = () => {
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={DarkTheme}>
-        <PopupContent isLoading={isLoading} summary={summary} citations={citations} scoreSuggestion={scoreSuggestion}/>
+        <PopupContent isLoading={isLoading} summary={summary} citations={citations} />
       </BaseProvider>
     </StyletronProvider>
   );
