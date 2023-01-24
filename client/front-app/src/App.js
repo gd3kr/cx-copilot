@@ -50,25 +50,31 @@ const SingleConversationAutoResponse = () => {
   const [open, setIsOpen] = useState(true);
   const [messages, setMessages] = useState([]);
   useEffect(() => {
-      context.listMessages().then(({results}) => {setMessages(messages)});
-  }
-  , [context])
-
-    useEffect(() => {
-        if (messages.length == 0) {
-            return
-        }
-
-        context.createDraft({
+        const url = 'YOUR_URL';
+        const httpResponse = fetch(url, {
+            method: 'POST',
+            headers: new Headers({ 'content-type': 'application/json' }),
+            body: JSON.stringify({
+                conversation_id: context.conversation.id,
+                use_cached: true,
+                cx_platform: 'front',
+                clientId: 3,
+            })
+        }).then((res) => res.json().then((parsed) => {
+            context.createDraft({
           content: {
-              body: 'Hello world',
+              body: parsed.completion,
               type: 'text'
           },
           replyOptions: {
               type: 'replyAll', // Or 'replyAll'
               originalMessageId: messages[0].id,
           }
-      })
+        })
+        }));
+  }, [context.conversation.id])
+    useEffect(() => {
+
     }, [messages])
    return <div className="App-sidebar-body">
     <Accordion>

@@ -6,6 +6,7 @@ from typing import Dict, List, TypedDict
 import discord
 import hikari
 import intercom.client
+import requests
 import zenpy
 from discord.utils import find
 from helpscout import HelpScout
@@ -142,6 +143,10 @@ class FrontMessage(TypedDict):
     body: str
 
 
+def _front_message_to_common(message: FrontMessage) -> Thread:
+    return Thread(body=message["body"])
+
+
 class FrontConversationRepository(ConversationRepository):
     token: str
 
@@ -150,7 +155,8 @@ class FrontConversationRepository(ConversationRepository):
 
     def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
         url = f"https://api2.frontapp.com/conversations/{conversation_id}/messages"
-        headers = {"accept": "application/json", "authorization": f"Bearer ${self.token}"}
+        headers = {"accept": "application/json", "authorization": f"Bearer {self.token}"}
 
         response = requests.get(url, headers=headers)
         parsed = response.json()
+        return Conversation(threads=list(map(_front_message_to_common, parsed["_results"])))
