@@ -21,10 +21,4 @@ from cx_copilot import (
 # print(CXCopilot().cache_block.get('test'))
 # print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
 # print(CXCopilot().get_ticket_response_using_hyde("3", use_cached=False, cache_response=False))
-print(
-    FrontConversationRepository(
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsic2hhcmVkOioiXSwiaWF0IjoxNjc0NTMwMDM3LCJpc3MiOiJmcm9udCIsInN1YiI6IjA5MTg5MDgzYzNiYzg3ZDYwNzc5IiwianRpIjoiNGNmZmRiMWEwMjg0YWZhMiJ9.13x-dUnSpcbmKADvKj0fdKu--fYzydvy2kt5HmOmkaM"
-    )
-    .get_conversation_by_id("66281573714")
-    .threads
-)
+print(FrontConversationRepository("").get_conversation_by_id("66281573714").threads)
