@@ -29,7 +29,19 @@ import {PLACEMENT} from "baseui/badge";
 
 
 const PopupContent = (props) => {
+    const {ticketId, completion, pipelineId, version} = props
+
      const scoreSuggestion = async (score) => {
+
+        console.log({
+            ticket_id: ticketId,
+            client_id: clientId,
+            completion: completion,
+            pipeline_id: pipelineId,
+            version: version,
+            score: score,
+        })
+
         const url = 'YOUR_URL';
         fetch(url, {
             method: 'POST',
@@ -40,7 +52,7 @@ const PopupContent = (props) => {
                 completion: completion,
                 pipeline_id: pipelineId,
                 version: version,
-                score: score
+                score: score,
             })
         })
     };
@@ -62,7 +74,6 @@ const PopupContent = (props) => {
         })
     }
 
-    console.log(clientId)
     return (
         <Block height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
         <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>
@@ -144,9 +155,8 @@ const Popup = () => {
                     setIsLoading(false)
                     setSummary(response.summary)
                     setCitations(response.citations)
-
-                    setTicketId(response.ticketId)
-                    setClientId(response.clientId)
+                    setTicketId(response.ticket_id)
+                    setClientId(response.client_id)
                     setCompletion(response.completion)
                     // setPipelineId(response.pipelineId)
                     // setVersion(response.version)
@@ -162,7 +172,16 @@ const Popup = () => {
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={DarkTheme}>
-        <PopupContent isLoading={isLoading} summary={summary} citations={citations} />
+        <PopupContent
+            isLoading={isLoading}
+            summary={summary}
+            citations={citations}
+            ticketId={ticketId}
+            clientId={clientId}
+            completion={completion}
+            pipelineId={pipelineId}
+            version={version}
+            />
       </BaseProvider>
     </StyletronProvider>
   );
