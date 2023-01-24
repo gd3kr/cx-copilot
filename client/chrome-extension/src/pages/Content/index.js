@@ -65,7 +65,7 @@ async function insertReply(currentURL, conversationID, platform) {
             conversation_id: new Number(conversationID),
             use_cached: true,
             cx_platform: platform,
-            clientId: clientId ? new Number(clientId) : null,
+            client_id: clientId ? new Number(clientId) : null,
         })
     });
     const responseBody = await httpResponse.json()
