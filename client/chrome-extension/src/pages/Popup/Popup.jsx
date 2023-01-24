@@ -24,9 +24,29 @@ import {Checkmark} from "baseui/checkbox/styled-components";
 import {Check, Delete} from "baseui/icon";
 import {FormControl} from "baseui/form-control";
 import {Input} from "baseui/input";
+import {toaster, ToasterContainer} from "baseui/toast";
+import {PLACEMENT} from "baseui/badge";
 
 
 const PopupContent = (props) => {
+    const {ticketId, completion, pipelineId, version} = props
+
+     const scoreSuggestion = async (score) => {
+
+        const url = 'YOUR_URL';
+        fetch(url, {
+            method: 'POST',
+            headers: new Headers({ 'content-type': 'application/json' }),
+            body: JSON.stringify({
+                ticket_id: ticketId,
+                client_id: clientId,
+                completion: completion,
+                pipeline_id: pipelineId,
+                version: version,
+                score: score,
+            })
+        })
+    };
     const {isLoading, summary, citations} = props;
     const [clientId, setClientId] = useState(null);
     const [inputClientId, setInputClientId] = useState(null);
@@ -45,66 +65,66 @@ const PopupContent = (props) => {
         })
     }
 
-    console.log(clientId)
-  return (
-      <Block height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
-      <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>
-          CX Copilot
-      </HeadingXSmall>
-          {clientId ? isLoading ? <ParagraphMedium>Loading response for the ticket</ParagraphMedium>:
-              (
-                  <React.Fragment>
-          <Accordion overrides={{
-              Root: {
-                  style: {
-                      marginBottom: theme.sizing.scale600,
-                  }
-              }
-          }}>
-              <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{summary}</ParagraphMedium></Panel>
-                  <Panel overrides={{
-                    PanelContainer: {
-                        style: {
-                            maxHeight: '400px',
-                        }
+    return (
+        <Block height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
+        <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>
+            CX Copilot
+        </HeadingXSmall>
+            {clientId ? isLoading ? <ParagraphMedium>Loading response for the ticket</ParagraphMedium>:
+                (
+                    <React.Fragment>
+            <Accordion overrides={{
+                Root: {
+                    style: {
+                        marginBottom: theme.sizing.scale600,
                     }
-                  }} title="Citations"><ParagraphMedium>{citations}</ParagraphMedium></Panel>
-            </Accordion>
-              <StyledDivider $style={{color: theme.colors.primary}}/>
-        <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
-            <ParagraphSmall>
-                Did we answer the ticket?
-            </ParagraphSmall>
-            <Block>
-                <Check size={30} style={{
-                    color: theme.colors.primary,
-                    marginRight: theme.sizing.scale300,
-                }}/>
-                   <Delete size={30} style={{
-                    color: theme.colors.primary,
-                }}/>
+                }
+            }}>
+                <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{summary}</ParagraphMedium></Panel>
+                    <Panel overrides={{
+                        PanelContainer: {
+                            style: {
+                                maxHeight: '200px',
+                            }
+                        }
+                    }} title="Citations"><ParagraphMedium $style={{
+                        overflow: 'hidden',
+                    }}>{citations}</ParagraphMedium></Panel>
+                </Accordion>
+                <StyledDivider $style={{color: theme.colors.primary}}/>
+            <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
+                <ParagraphSmall>
+                    Did we answer the ticket?
+                </ParagraphSmall>
+                    <Check onClick={() => scoreSuggestion(1)}  size={30} style={{
+                        color: theme.colors.primary,
+                        cursor: "pointer",
+                    }}/>
+                    <Delete onClick={() => scoreSuggestion(0)}  size={30} style={{
+                        color: theme.colors.primary,
+                        cursor: "pointer",
+                    }}/>
             </Block>
-        </Block>
-                      </React.Fragment>
-              ):
-              <Block padding={theme.sizing.scale200} display={"flex"} flexDirection={"column"} justifyContent={"space-between"}>
-                  <Block display={"flex"} flexDirection={"column"}>
-           <FormControl label="Client ID" caption="Please enter clientID provided during onboarding">
-      <Input
-        id="input-id"
-        value={inputClientId}
-        onChange={event => setInputClientId(event.currentTarget.value)}
-      />
-    </FormControl>
-                  </Block>
-  <Button size={"mini"} onClick={() => setClientIDCallback(inputClientId)}>
-                      Submit
-                  </Button>
-              </Block>
-}
+                        </React.Fragment>
+                ):
+                <Block padding={theme.sizing.scale200} display={"flex"} flexDirection={"column"} justifyContent={"space-between"}>
+                    <Block display={"flex"} flexDirection={"column"}>
+            <FormControl label="Client ID" caption="Please enter clientID provided during onboarding">
+        <Input
+            id="input-id"
+            value={inputClientId}
+            onChange={event => setInputClientId(event.currentTarget.value)}
+        />
+        </FormControl>
+                    </Block>
+    <Button size={"mini"} onClick={() => setClientIDCallback(inputClientId)}>
+                        Submit
+                    </Button>
+                </Block>
+    }
 
-      </Block>
-  );
+        </Block>
+    );
 
 }
 
@@ -112,8 +132,15 @@ const Popup = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [summary, setSummary] = useState([]);
     const [citations, setCitations] = useState([]);
+    const [ticketId, setTicketId] = useState(null);
+    const [clientId, setClientId] = useState(null);
+    const [completion, setCompletion] = useState(null);
+    const [pipelineId, setPipelineId] = useState(null);
+    const [version, setVersion] = useState(null);
 
-     useEffect(() => {
+
+
+    useEffect(() => {
         const func = () => {
             setIsLoading(true);
             chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -121,6 +148,11 @@ const Popup = () => {
                     setIsLoading(false)
                     setSummary(response.summary)
                     setCitations(response.citations)
+                    setTicketId(response.ticket_id)
+                    setClientId(response.client_id)
+                    setCompletion(response.completion)
+                    // setPipelineId(response.pipelineId)
+                    // setVersion(response.version)
                 });
             });
         }
@@ -128,14 +160,23 @@ const Popup = () => {
         func();
     }, [])
     const engine = new Styletron();
-     const [, theme] = useStyletron();
+    const [, theme] = useStyletron();
 
   return (
-      <StyletronProvider value={engine}>
+    <StyletronProvider value={engine}>
       <BaseProvider theme={DarkTheme}>
-        <PopupContent isLoading={isLoading} summary={summary} citations={citations}/>
+        <PopupContent
+            isLoading={isLoading}
+            summary={summary}
+            citations={citations}
+            ticketId={ticketId}
+            clientId={clientId}
+            completion={completion}
+            pipelineId={pipelineId}
+            version={version}
+            />
       </BaseProvider>
-        </StyletronProvider>
+    </StyletronProvider>
   );
 };
 

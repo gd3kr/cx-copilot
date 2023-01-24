@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from cx_copilot import CXCopilot, GPTCompletionBlock, OpenAIEmbeddingBlock, PineconeVectorDBBlock, RedisCache
+from cx_copilot import (
+    CXCopilot,
+    FrontConversationRepository,
+    GPTCompletionBlock,
+    OpenAIEmbeddingBlock,
+    PineconeVectorDBBlock,
+    RedisCache,
+)
 
 # op = OpenAIEmbeddingBlock(open_ai_key='YOUR_OPEN_AI_KEY')
 # vec = op.embed_text('hello, please help me reset my account password')
@@ -15,3 +22,6 @@ from cx_copilot import CXCopilot, GPTCompletionBlock, OpenAIEmbeddingBlock, Pine
 print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
 print(CXCopilot().get_ticket_response_using_hyde("3", use_cached=False, cache_response=False))
 print()
+# print(CXCopilot().ticket_repo.get_conversation_by_id("3").threads[-1])
+# print(CXCopilot().get_ticket_response_using_hyde("3", use_cached=False, cache_response=False))
+print(FrontConversationRepository("").get_conversation_by_id("66281573714").threads)

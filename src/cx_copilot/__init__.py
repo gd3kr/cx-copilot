@@ -8,4 +8,4 @@ from .blocks.tickets import FrontConversationRepository
 from .blocks.vectordb import PineconeVectorDBBlock
 from .compound.compound import CXCopilot
 
-__version__ = "0.0.3"
+__version__ = "0.0.5"
