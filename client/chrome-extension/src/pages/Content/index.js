@@ -49,6 +49,14 @@ chrome.runtime.onMessage.addListener(
 );
 
 async function insertReply(currentURL, conversationID, platform) {
+    let clientId = null;
+    try {
+        const clientIdLocal = await chrome.storage.local.get('client_id')
+        clientId = clientIdLocal.client_id.split("_")[0]
+    } catch (e) {
+        console.log(e)
+    }
+
     const url = 'YOUR_URL';
     const httpResponse = await fetch(url, {
         method: 'POST',
@@ -56,7 +64,8 @@ async function insertReply(currentURL, conversationID, platform) {
         body: JSON.stringify({
             conversation_id: new Number(conversationID),
             use_cached: true,
-            cx_platform: platform
+            cx_platform: platform,
+            clientId: clientId ? new Number(clientId) : null,
         })
     });
     const responseBody = await httpResponse.json()

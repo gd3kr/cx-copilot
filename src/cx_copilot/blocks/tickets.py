@@ -136,3 +136,20 @@ class DiscordConversationRepository(ConversationRepository):
         #         return Conversation(threads=list(map(_discord_thread_to_common, messages)))
 
         return None
+
+class FrontMessage(TypedDict):
+    body: str
+class FrontConversationRepository(ConversationRepository):
+    token: str
+    def __init__(self, token:str):
+        self.token = token
+
+    def get_conversation_by_id(self, conversation_id: str) -> Conversation | None:
+        url = f"https://api2.frontapp.com/conversations/{conversation_id}/messages"
+        headers = {
+            "accept": "application/json",
+            "authorization": f"Bearer ${self.token}"
+        }
+
+        response = requests.get(url, headers=headers)
+        parsed = response.json()
