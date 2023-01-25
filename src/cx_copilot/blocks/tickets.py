@@ -3,12 +3,9 @@ from __future__ import annotations
 import asyncio
 from typing import Dict, List, TypedDict
 
-import discord
-import hikari
 import intercom.client
 import requests
 import zenpy
-from discord.utils import find
 from helpscout import HelpScout
 
 DISCORD_BASE_URL = "https://discordapp.com/api/"
