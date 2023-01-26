@@ -31,7 +31,7 @@ import {PLACEMENT} from "baseui/badge";
 const PopupContent = (props) => {
     const {ticketId, completion, pipelineId, version} = props
 
-     const scoreSuggestion = async (score) => {
+     const rateSuggestion = async (rating) => {
 
         const url = 'YOUR_URL';
         fetch(url, {
@@ -43,7 +43,7 @@ const PopupContent = (props) => {
                 completion: completion,
                 pipeline_id: pipelineId,
                 version: version,
-                score: score,
+                rating: rating,
             })
         })
     };
