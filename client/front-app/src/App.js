@@ -45,8 +45,8 @@ function App() {
       break;
   };
 }
-const url = process.env.BACKEND_URL;
-
+const url = process.env.REACT_APP_BACKEND_URL;
+console.log(url);
 const SingleConversationAutoResponse = () => {
    const context = useFrontContext();
   const [open, setIsOpen] = useState(true);
