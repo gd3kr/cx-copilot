@@ -31,7 +31,7 @@ import {PLACEMENT} from "baseui/badge";
 const PopupContent = (props) => {
     const {ticketId, completion, pipelineId, version} = props
 
-     const rateSuggestion = async (rating) => {
+     const rateCompletion = async (rating) => {
 
         const url = 'YOUR_URL';
         fetch(url, {
@@ -96,11 +96,11 @@ const PopupContent = (props) => {
                 <ParagraphSmall>
                     Did we answer the ticket?
                 </ParagraphSmall>
-                    <Check onClick={() => scoreSuggestion(1)}  size={30} style={{
+                    <Check onClick={() => rateCompletion(1)}  size={30} style={{
                         color: theme.colors.primary,
                         cursor: "pointer",
                     }}/>
-                    <Delete onClick={() => scoreSuggestion(0)}  size={30} style={{
+                    <Delete onClick={() => rateCompletion(0)}  size={30} style={{
                         color: theme.colors.primary,
                         cursor: "pointer",
                     }}/>
