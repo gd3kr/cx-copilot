@@ -1,35 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import logo from '../../assets/img/logo.svg';
-import Greetings from '../../containers/Greetings/Greetings';
 import './Popup.css';
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
-import {LightTheme, BaseProvider, styled, DarkTheme, useStyletron} from 'baseui';
+import { BaseProvider, DarkTheme, useStyletron} from 'baseui';
 import {
-    HeadingMedium,
-    HeadingSmall,
-    HeadingXSmall,
-    LabelSmall,
+    HeadingXSmall, 
     ParagraphMedium,
     ParagraphSmall
 } from "baseui/typography";
-import {DIVIDER} from "baseui/table-semantic";
 import {Block} from "baseui/block";
 import {StyledDivider} from "baseui/divider";
 import {Accordion, Panel} from "baseui/accordion";
-import {ProgressBar} from "baseui/progress-bar";
-import {LoadingSpinner} from "baseui/button/styled-components";
 import {Button} from "baseui/button";
-import {Checkmark} from "baseui/checkbox/styled-components";
 import {Check, Delete} from "baseui/icon";
 import {FormControl} from "baseui/form-control";
 import {Input} from "baseui/input";
-import {toaster, ToasterContainer} from "baseui/toast";
-import {PLACEMENT} from "baseui/badge";
+import Citations from '../../components/citations';
 
 
 const PopupContent = (props) => {
-    // const {ticketId, completion, pipelineId, version} = props
     const {isLoading, completions} = props;
 
     const [clientId, setClientId] = useState(null);
@@ -52,7 +41,7 @@ const PopupContent = (props) => {
         });
     }
 
-     const rateCompletion = async (rating) => {
+    const rateCompletion = async (rating) => {
         const url = 'YOUR_URL';
         fetch(url, {
             method: 'POST',
@@ -82,28 +71,14 @@ const PopupContent = (props) => {
                 <ParagraphMedium>Loading response for the ticket</ParagraphMedium>
                 :
                 <React.Fragment>
-                    <Accordion overrides={{
-                        Root: {
-                            style: {
-                                marginBottom: theme.sizing.scale600,
-                            }
-                        }
-                    }}>
-                    <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[completionIdx]?.summary}</ParagraphMedium></Panel>
-                    <Panel overrides={{
-                        PanelContainer: {
-                            style: {
-                                maxHeight: '200px',
-                            }
-                        }
-                    }}
-                    title="Citations">
-                        <ParagraphMedium $style={{overflow: 'hidden'}}>
-                            {completions[completionIdx]?.citations}
-                        </ParagraphMedium>
+                    <Accordion overrides={ { Root: { style: { marginBottom: theme.sizing.scale600 } } } }>
+                        <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[completionIdx]?.summary}</ParagraphMedium></Panel>
+                        <Panel title="Citations" overrides={ { PanelContainer: { style: { maxHeight: '200px' } } } }>
+                            <Citations citationsStr={completions[completionIdx]?.citations || '[]'}></Citations>
                         </Panel>
                     </Accordion>
                     <StyledDivider $style={{color: theme.colors.primary}}/>
+                    
                     <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
                         <ParagraphSmall>Did we answer the ticket?</ParagraphSmall>
                         <Check onClick={() => rateCompletion(1)} size={30} style={{

@@ -6,6 +6,8 @@ const INTERCOM_REPLY_TEXTBOX_CLASSNAME = "intercom-interblocks-align-left emberc
 const HELPSCOUT_REPLY_BUTTON_CLASSNAME = "navReply"
 const HELPSCOUT_REPLY_TEXTBOX_CLASSNAME = "redactor_redactor redactor_editor"
 
+const HELPSCOUT_SEND_REPLY_BUTTON_ID = "sendBtn"
+
 async function scrapeTicketData(currentURL) {
     console.log("Hello from CX Copilot", currentURL)
 
@@ -36,6 +38,33 @@ async function scrapeTicketData(currentURL) {
 //             scrapeTicketData(currentURL);
 //         }
 //     });
+
+
+const addSendReplyListener = () => {
+    // let sendButton = document.getElementById('cancelTicket');
+    let sendButton = document.getElementById(HELPSCOUT_SEND_REPLY_BUTTON_ID);
+    sendButton.addEventListener('click', async () => {
+        const reply = document.getElementsByClassName(HELPSCOUT_REPLY_TEXTBOX_CLASSNAME)[0].innerText
+
+        const clientIdLocal = await chrome.storage.local.get('client_id')
+        const clientId = clientIdLocal.client_id.split("_")[0]
+
+        const conversationId = scrapeHelpscout(document.location.href)
+
+        const url = '{YOUR_URL}/tickets';
+        const httpResponse = await fetch(url, {
+            method: 'POST',
+            headers: new Headers({ 'content-type': 'application/json' }),
+            body: JSON.stringify({
+                conversation_id: new Number(conversationId),
+                client_id: clientId ? new Number(clientId) : null,
+                response: reply,
+            })
+        });
+        console.log(httpResponse)
+    });
+    console.log('send reply listener added')
+};
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log(request)
@@ -83,6 +112,12 @@ async function insertReply(currentURL, conversationID, platform) {
 
     // Clicks the "Reply" button so that reply textbox becomes visible
     document.getElementById(HELPSCOUT_REPLY_BUTTON_CLASSNAME).click();
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addSendReplyListener);
+    } else {
+        addSendReplyListener();
+    }
 
     // Timeout 0.5 seconds because the reply textbox ("redactor_redactor redactor_editor")
     // DOM element isn't visibile right away. We have to wait for the Click action to complete
