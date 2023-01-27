@@ -44,13 +44,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse(res)
         })
     } else if (request.type == 'switch_completion') {
-        const platform = getCXPlatformName(request.url);
+        const platform = getCXPlatformName(document.location.href);
         if (platform == 'not_supported') {
             return;
         }
         let ticketID = '';
         if (platform == 'helpscout') {
-            ticketID = scrapeHelpscout(currentURL);
+            ticketID = scrapeHelpscout(document.location.href);
             setTimeout(() => {
                 injectHelpscoutReply(request.completion);
             }, 500);

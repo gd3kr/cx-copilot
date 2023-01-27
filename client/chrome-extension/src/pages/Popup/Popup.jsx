@@ -36,8 +36,7 @@ const PopupContent = (props) => {
     const [inputClientId, setInputClientId] = useState(null);
     const [,theme] = useStyletron()
 
-    // TODO: this pipelineId starting at 1 is confusing -- we should use 0 index
-    const [pipelineId, setPipelineId] = useState(1);
+    const [completionIdx, setCompletionIdx] = useState(0);
 
     useEffect(() => {
         chrome.storage.local.get('client_id').then((res) => {
@@ -45,20 +44,15 @@ const PopupContent = (props) => {
         });
     }, []);
 
-    const changePipelineId = () => {
-        let id = pipelineId+1;
-        if (id > completions.length) {
-            id = 1;
-        }
-        setPipelineId(id);
-        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { type: "switch_completion", completion: completions[id-1]?.text}, () => {});
+    const changeCompletionsIdx = () => {
+        const idx = completionIdx+1 >= completions.length ? 0 : completionIdx+1;
+        setCompletionIdx(idx);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, { type: "switch_completion", completion: completions[idx]?.text }, () => {});
         });
     }
 
-
      const rateCompletion = async (rating) => {
-
         const url = 'YOUR_URL';
         fetch(url, {
             method: 'POST',
@@ -66,10 +60,10 @@ const PopupContent = (props) => {
             body: JSON.stringify({
                 client_id: clientId,
                 ticket_id: ticketId,
-                pipeline_id: pipelineId,
+                pipeline_id: completionIdx+1,   // pipeline_id starts at 1 not 0
                 version: version,
                 rating: rating,
-                completion: completions[pipelineId-1].text,
+                completion: completions[completionIdx].text,
             })
         })
     };
@@ -95,7 +89,7 @@ const PopupContent = (props) => {
                             }
                         }
                     }}>
-                    <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[pipelineId-1]?.summary}</ParagraphMedium></Panel>
+                    <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[completionIdx]?.summary}</ParagraphMedium></Panel>
                     <Panel overrides={{
                         PanelContainer: {
                             style: {
@@ -105,7 +99,7 @@ const PopupContent = (props) => {
                     }}
                     title="Citations">
                         <ParagraphMedium $style={{overflow: 'hidden'}}>
-                            {completions[pipelineId-1]?.citations}
+                            {completions[completionIdx]?.citations}
                         </ParagraphMedium>
                         </Panel>
                     </Accordion>
@@ -122,8 +116,8 @@ const PopupContent = (props) => {
                         }}/>
                     </Block>
                     <Block>
-                        <ParagraphSmall>{pipelineId}/{completions.length}</ParagraphSmall>
-                        <Button onClick={changePipelineId}>Next Suggestion</Button>
+                        <ParagraphSmall>{completionIdx+1}/{completions.length}</ParagraphSmall>
+                        <Button onClick={changeCompletionsIdx}>Next Suggestion</Button>
                     </Block>
                 </React.Fragment>
                 :
@@ -147,16 +141,7 @@ const PopupContent = (props) => {
 
 const Popup = () => {
     const [isLoading, setIsLoading] = useState(true);
-    const [summary, setSummary] = useState([]);
-    const [citations, setCitations] = useState([]);
-    const [ticketId, setTicketId] = useState(null);
-    const [clientId, setClientId] = useState(null);
-    const [completion, setCompletion] = useState(null);
-    const [pipelineId, setPipelineId] = useState(null);
-    const [version, setVersion] = useState(null);
-
     const [completions, setCompletions] = useState([]);
-
 
     useEffect(() => {
         setIsLoading(true);
@@ -176,13 +161,6 @@ const Popup = () => {
         <PopupContent
             completions={completions}
             isLoading={isLoading}
-            // summary={summary}
-            // citations={citations}
-            // ticketId={ticketId}
-            // clientId={clientId}
-            // completion={completion}
-            // pipelineId={pipelineId}
-            // version={version}
             />
         </BaseProvider>
     </StyletronProvider>
