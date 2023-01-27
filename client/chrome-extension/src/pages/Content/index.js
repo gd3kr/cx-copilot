@@ -88,12 +88,9 @@ async function insertReply(currentURL, conversationID, platform) {
     // DOM element isn't visibile right away. We have to wait for the Click action to complete
     // and the DOM element to become visible
     setTimeout(() => {
-        // let response = responseBody.completion
-        // injectHelpscoutReply(response.trim())
         injectHelpscoutReply(responseBody.completions[0].text)
     }, 500)
 
-    console.log(responseBody)
     return responseBody;
 }
 
