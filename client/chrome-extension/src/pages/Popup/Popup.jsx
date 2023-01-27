@@ -162,12 +162,7 @@ const Popup = () => {
         setIsLoading(true);
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {type: "get_completions"}, (response) => {
-
-                console.log('get_completions callback in popup')
-
                 setIsLoading(false);
-                console.log(response)
-                console.log(response.completions)
                 setCompletions(response.completions);
             });
         });

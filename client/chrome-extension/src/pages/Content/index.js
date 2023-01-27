@@ -37,10 +37,12 @@ async function scrapeTicketData(currentURL) {
 //         }
 //     });
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log(request)
     if (request.type == 'get_completions') {
-        scrapeTicketData(document.location.href).then((res) => sendResponse(res))
+        scrapeTicketData(document.location.href).then((res) => {
+            sendResponse(res)
+        })
     } else if (request.type == 'switch_completion') {
         const platform = getCXPlatformName(request.url);
         if (platform == 'not_supported') {
