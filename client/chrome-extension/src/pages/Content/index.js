@@ -37,16 +37,25 @@ async function scrapeTicketData(currentURL) {
 //         }
 //     });
 
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        console.log(request)
-        if (request.type == 'inject') {
-            scrapeTicketData(document.location.href).then((res) => sendResponse(res))
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+    console.log(request)
+    if (request.type == 'get_completions') {
+        scrapeTicketData(document.location.href).then((res) => sendResponse(res))
+    } else if (request.type == 'switch_completion') {
+        const platform = getCXPlatformName(request.url);
+        if (platform == 'not_supported') {
+            return;
         }
-
-        return true;
+        let ticketID = '';
+        if (platform == 'helpscout') {
+            ticketID = scrapeHelpscout(currentURL);
+            setTimeout(() => {
+                injectHelpscoutReply(request.completion);
+            }, 500);
+        }
     }
-);
+    return true;
+});
 
 async function insertReply(currentURL, conversationID, platform) {
     let clientId = null;
@@ -54,10 +63,10 @@ async function insertReply(currentURL, conversationID, platform) {
         const clientIdLocal = await chrome.storage.local.get('client_id')
         clientId = clientIdLocal.client_id.split("_")[0]
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 
-    const url = 'YOUR_URL';
+    const url = '{YOUR_URL}/completions';
     const httpResponse = await fetch(url, {
         method: 'POST',
         headers: new Headers({ 'content-type': 'application/json' }),
@@ -77,10 +86,12 @@ async function insertReply(currentURL, conversationID, platform) {
     // DOM element isn't visibile right away. We have to wait for the Click action to complete
     // and the DOM element to become visible
     setTimeout(() => {
-        let response = responseBody.completion
-        injectHelpscoutReply(response.trim())
+        // let response = responseBody.completion
+        // injectHelpscoutReply(response.trim())
+        injectHelpscoutReply(responseBody.completions[0].text)
     }, 500)
 
+    console.log(responseBody)
     return responseBody;
 }
 

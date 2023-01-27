@@ -29,7 +29,33 @@ import {PLACEMENT} from "baseui/badge";
 
 
 const PopupContent = (props) => {
-    const {ticketId, completion, pipelineId, version} = props
+    // const {ticketId, completion, pipelineId, version} = props
+    const {isLoading, completions} = props;
+
+    const [clientId, setClientId] = useState(null);
+    const [inputClientId, setInputClientId] = useState(null);
+    const [,theme] = useStyletron()
+
+    // TODO: this pipelineId starting at 1 is confusing -- we should use 0 index
+    const [pipelineId, setPipelineId] = useState(1);
+
+    useEffect(() => {
+        chrome.storage.local.get('client_id').then((res) => {
+            setClientId(res.client_id)
+        });
+    }, []);
+
+    const changePipelineId = () => {
+        let id = pipelineId+1;
+        if (id > completions.length) {
+            id = 1;
+        }
+        setPipelineId(id);
+        chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { type: "switch_completion", completion: completions[id-1]?.text}, () => {});
+        });
+    }
+
 
      const rateCompletion = async (rating) => {
 
@@ -38,25 +64,15 @@ const PopupContent = (props) => {
             method: 'POST',
             headers: new Headers({ 'content-type': 'application/json' }),
             body: JSON.stringify({
-                ticket_id: ticketId,
                 client_id: clientId,
-                completion: completion,
+                ticket_id: ticketId,
                 pipeline_id: pipelineId,
                 version: version,
                 rating: rating,
+                completion: completions[pipelineId-1].text,
             })
         })
     };
-    const {isLoading, summary, citations} = props;
-    const [clientId, setClientId] = useState(null);
-    const [inputClientId, setInputClientId] = useState(null);
-    const [,theme] = useStyletron()
-
-    useEffect(() => {
-        chrome.storage.local.get('client_id').then((res) => {
-            setClientId(res.client_id)
-        })
-    }, [])
 
     const setClientIDCallback = (clientId) => {
         setClientId(clientId)
@@ -79,7 +95,7 @@ const PopupContent = (props) => {
                             }
                         }
                     }}>
-                    <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{summary}</ParagraphMedium></Panel>
+                    <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[pipelineId-1]?.summary}</ParagraphMedium></Panel>
                     <Panel overrides={{
                         PanelContainer: {
                             style: {
@@ -89,7 +105,7 @@ const PopupContent = (props) => {
                     }}
                     title="Citations">
                         <ParagraphMedium $style={{overflow: 'hidden'}}>
-                            {citations}
+                            {completions[pipelineId-1]?.citations}
                         </ParagraphMedium>
                         </Panel>
                     </Accordion>
@@ -104,6 +120,10 @@ const PopupContent = (props) => {
                             color: theme.colors.primary,
                             cursor: "pointer",
                         }}/>
+                    </Block>
+                    <Block>
+                        <ParagraphSmall>{pipelineId}/{completions.length}</ParagraphSmall>
+                        <Button onClick={changePipelineId}>Next Suggestion</Button>
                     </Block>
                 </React.Fragment>
                 :
@@ -135,46 +155,43 @@ const Popup = () => {
     const [pipelineId, setPipelineId] = useState(null);
     const [version, setVersion] = useState(null);
 
+    const [completions, setCompletions] = useState([]);
 
 
     useEffect(() => {
-        const func = () => {
-            setIsLoading(true);
-            chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {type: "inject"}, function (response) {
-                    setIsLoading(false)
-                    setSummary(response.summary)
-                    setCitations(response.citations)
-                    setTicketId(response.ticket_id)
-                    setClientId(response.client_id)
-                    setCompletion(response.completion)
-                    // setPipelineId(response.pipelineId)
-                    // setVersion(response.version)
-                });
-            });
-        }
+        setIsLoading(true);
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, {type: "get_completions"}, (response) => {
 
-        func();
-    }, [])
+                console.log('get_completions callback in popup')
+
+                setIsLoading(false);
+                console.log(response)
+                console.log(response.completions)
+                setCompletions(response.completions);
+            });
+        });
+    }, []);
     const engine = new Styletron();
     const [, theme] = useStyletron();
 
-  return (
+    return (
     <StyletronProvider value={engine}>
-      <BaseProvider theme={DarkTheme}>
+        <BaseProvider theme={DarkTheme}>
         <PopupContent
+            completions={completions}
             isLoading={isLoading}
-            summary={summary}
-            citations={citations}
-            ticketId={ticketId}
-            clientId={clientId}
-            completion={completion}
-            pipelineId={pipelineId}
-            version={version}
+            // summary={summary}
+            // citations={citations}
+            // ticketId={ticketId}
+            // clientId={clientId}
+            // completion={completion}
+            // pipelineId={pipelineId}
+            // version={version}
             />
-      </BaseProvider>
+        </BaseProvider>
     </StyletronProvider>
-  );
+    );
 };
 
 export default Popup;
