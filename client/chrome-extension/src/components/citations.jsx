@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Accordion, Panel } from "baseui/accordion"
 import { ParagraphMedium } from "baseui/typography"
-import { BaseProvider, DarkTheme, useStyletron} from 'baseui'
-
+import { useStyletron} from 'baseui'
 
 
 const Citations = (props) => {
@@ -10,7 +9,7 @@ const Citations = (props) => {
       citationsStr
     } = props
 
-    const [,theme] = useStyletron()
+    const [, theme] = useStyletron()
 
     const citations = JSON.parse(citationsStr)
 

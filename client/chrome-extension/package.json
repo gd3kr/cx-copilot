@@ -1,5 +1,5 @@
 {
-  "name": "CX Copilot Chrome Extension",
+  "name": "cx-copilot-chrome-extension",
   "version": "0.0.1",
   "scripts": {
     "build": "node utils/build.js",
@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^17.0.2",
+    "axios": "^1.2.6",
     "baseui": "^12.2.0",
+    "query-string": "^8.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.1",
