@@ -35,7 +35,7 @@ const TicketData = (props) => {
         </Panel>
       </Accordion>
 
-      <StyledDivider $style={{color: theme.colors.primary}}/>
+      {/* <StyledDivider $style={{color: theme.colors.primary}}/> */}
       
       <Feedback
         clientId={clientId}
