@@ -128,7 +128,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#client code
+# client code
 /client/chrome-extension/node_modules/
 /client/chrome-extension/package-lock.json
 .DS_Store
+
+# IDE
+.idea
+.vscode
