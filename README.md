@@ -1,4 +1,4 @@
-### Quickstart
+## Quickstart
 
 Go to extension directory.
 ```
