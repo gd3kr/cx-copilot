@@ -14,17 +14,15 @@ const Citations = (props) => {
     const citations = JSON.parse(citationsStr)
 
     return (
-        <>
-            <Accordion>
-            {citations.map((citation, idx) => (
-                <Panel title={idx}>
-                    <ParagraphMedium color={theme.colors.primary}>{citation.score}</ParagraphMedium>
-                    <ParagraphMedium color={theme.colors.primary}>{citation.question}</ParagraphMedium>
-                    <ParagraphMedium color={theme.colors.primary}>{citation.answer}</ParagraphMedium>
-                </Panel>
-            ))}
-            </Accordion>
-        </>
+        <Accordion>
+        {citations.map((citation, idx) => (
+            <Panel title={idx}>
+                <ParagraphMedium color={theme.colors.primary}>{citation.score}</ParagraphMedium>
+                <ParagraphMedium color={theme.colors.primary}>{citation.question}</ParagraphMedium>
+                <ParagraphMedium color={theme.colors.primary}>{citation.answer}</ParagraphMedium>
+            </Panel>
+        ))}
+        </Accordion>
       )
 }
 

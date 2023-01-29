@@ -26,14 +26,16 @@ const TicketData = (props) => {
   return (
     <React.Fragment>
 
-      <Accordion overrides={ { Root: { style: { marginBottom: theme.sizing.scale600 } } } }>
-        <Panel title="Summary">
-          <Summary summary={completion.summary}/>
-        </Panel>
-        <Panel title="Citations" overrides={ { PanelContainer: { style: { maxHeight: '200px' } } } }>
-          <Citations citationsStr={completion.citations || '[]'}/>
-        </Panel>
-      </Accordion>
+      <Block>
+        <Accordion overrides={ { Root: { style: { marginBottom: theme.sizing.scale600 } } } }>
+          <Panel title="Summary">
+            <Summary summary={completion.summary}/>
+          </Panel>
+          <Panel title="Citations" overrides={ { PanelContainer: { style: { maxHeight: '200px' } } } }>
+            <Citations citationsStr={completion.citations || '[]'}/>
+          </Panel>
+        </Accordion>
+      </Block>
 
       {/* <StyledDivider $style={{color: theme.colors.primary}}/> */}
       
