@@ -43,6 +43,7 @@ const TicketData = (props) => {
         completionIdx={completionIdx}
         completionsLength={completionsLength}
         completion={completion}
+        version={1} // hardcoded version number
         setNextCompletionIdx={setNextCompletionIdx}/>
 
       <Block>

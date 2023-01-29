@@ -12,9 +12,8 @@ const Feedback = (props) => {
     clientId,
     ticketId,
     completionIdx,
-    completionsLength,
     completion,
-    setNextCompletionIdx,
+    version,
   } = props;
 
   const [, theme] = useStyletron();
