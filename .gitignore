@@ -131,3 +131,4 @@ dmypy.json
 #client code
 /client/chrome-extension/node_modules/
 /client/chrome-extension/package-lock.json
+.DS_Store
