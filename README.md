@@ -23,7 +23,7 @@ $ yarn start
 ```
 
 5. Load your extension on Chrome by doing the following:
-    i. Go to `chrome://extensions/`
-    ii. Enable `developer mode`
-    iii. Click on `load unpacked extension`
-    iv. Select the `build` folder
+    1. Go to `chrome://extensions/`
+    2. Enable `developer mode`
+    3. Click on `load unpacked extension`
+    4. Select the `build` folder
