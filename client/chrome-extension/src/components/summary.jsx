@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Disclosure } from '@headlessui/react'
+import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline'
 import '../styles/globals.css'
 
 const Summary = (props) => {
@@ -7,37 +9,37 @@ const Summary = (props) => {
   } = props;
 
   return (
-    <div className="accordion" id="accordionSummary">
-      <div className="accordion-item bg-white border border-gray-200">
-        <h2 className="accordion-header mb-0" id="accordionSummaryHeading">
-          <button className="
-            accordion-button
-            relative
-            flex
-            items-center
-            w-full
-            py-4
-            px-5
-            text-base text-gray-800 text-left
-            bg-white
-            border-0
-            rounded-none
-            transition
-            focus:outline-none
-          " type="button" data-bs-toggle="collapse" data-bs-target="#collapseSummary" aria-expanded="true"
-            aria-controls="collapseSummary">
-            Summary
-          </button>
-        </h2>
-        <div id="collapseSummary" className="accordion-collapse collapse show" aria-labelledby="accordionSummaryHeading"
-          data-bs-parent="#accordionSummary">
-          <div className="accordion-body py-4 px-5">
-            {summary}
-          </div>
+    <div className="bg-white">
+      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40 lg:px-8">
+        <div className="mx-auto max-w-4xl divide-y divide-gray-900/10">
+          <dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
+            <Disclosure as="div" key={"summary"} className="pt-6">
+              {({ open }) => (
+                <>
+                  <dt>
+                    <Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
+                      <span className="text-base font-semibold leading-7">Summary</span>
+                      <span className="ml-6 flex h-7 items-center">
+                        {open ? (
+                          <PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
+                        ) : (
+                          <MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
+                        )}
+                      </span>
+                    </Disclosure.Button>
+                  </dt>
+                  <Disclosure.Panel as="dd" className="mt-2 pr-12">
+                    <p className="text-base leading-7 text-gray-600">{summary}</p>
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+          </dl>
         </div>
       </div>
     </div>
   )
+
 }
 
 export default Summary
