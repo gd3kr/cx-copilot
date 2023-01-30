@@ -12,7 +12,6 @@
     "@hot-loader/react-dom": "^17.0.2",
     "autoprefixer": "^10.4.13",
     "axios": "^1.2.6",
-    "baseui": "^12.2.0",
     "cssnano": "^5.1.14",
     "postcss": "^8.4.21",
     "postcss-import": "^15.1.0",

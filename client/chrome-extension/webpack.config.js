@@ -66,12 +66,6 @@ var options = {
           {
             loader: 'css-loader',
           },
-          // {
-          //   loader: 'postcss-sass-loader',
-          //   options: {
-          //     sourceMap: true,
-          //   },
-          // }
           {
             loader: 'postcss-loader',
           },
