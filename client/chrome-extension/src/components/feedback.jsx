@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ApiClient from '../utils/client';
 import '../styles/globals.css'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 const Feedback = (props) => {
   const {
@@ -24,19 +25,28 @@ const Feedback = (props) => {
     });
   };
 
+  <button
+    type="button"
+    className="inline-flex items-center rounded-md border border-transparent bg-green-500 uppercase px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+  ></button>
+
   return (
     <div className="flex space-x-2 justify-center">
-      <div className="mt-2 max-w-xl text-sm text-gray-500">
-        Did we answer the ticket?
-      </div>
-      <div>
-        <button type="button" onClick={() => rateCompletion(1)} className="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
-          Yes
+      <span className="text-base font-semibold leading-7">Did we answer the ticket?</span>
+      <span className="isolate inline-flex rounded-md shadow-sm">
+        <button
+          type="button"
+          className="inline-flex items-center rounded-l-md border border-transparent bg-green-500 uppercase px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => rateCompletion(1)}>
+          <CheckIcon className="h-5 w-5" aria-hidden="true" />
         </button>
-        <button type="button" onClick={() => rateCompletion(0)} className="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
-          No
+        <button
+          type="button"
+          className="inline-flex items-center rounded-r-md border border-transparent bg-red-600 uppercase px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          onClick={() => rateCompletion(0)}>
+          <XMarkIcon className="h-5 w-5" aria-hidden="true" />
         </button>
-      </div>
+      </span>
     </div>
   )
 
