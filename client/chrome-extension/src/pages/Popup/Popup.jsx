@@ -6,7 +6,7 @@ import Onboarding from '../../components/onboardingForm';
 import TicketData from '../../components/ticketData';
 import Heading from '../../components/heading';
 import Loading from '../../components/loading';
-import './Popup.css';
+import '../../styles/globals.css';
 
 
 const Popup = () => {
