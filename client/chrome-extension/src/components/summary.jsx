@@ -39,7 +39,6 @@ const Summary = (props) => {
       </div>
     </div>
   )
-
 }
 
 export default Summary
