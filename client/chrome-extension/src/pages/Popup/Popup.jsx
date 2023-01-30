@@ -1,18 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import './Popup.css';
-import { Client as Styletron } from 'styletron-engine-atomic';
-import { Provider as StyletronProvider } from 'styletron-react';
-import { BaseProvider, DarkTheme, useStyletron} from 'baseui';
-import {
-  HeadingXSmall, 
-  ParagraphMedium,
-} from "baseui/typography";
-import { Block } from "baseui/block";
 import ApiClient from '../../utils/client';
 import { MessageRequestTypes, StorageVariables } from '../../utils/constants';
 import { getPlatformFromUrl, getTicketIdFromPlatformAndUrl } from '../../utils/util';
 import Onboarding from '../../components/onboardingForm';
 import TicketData from '../../components/ticketData';
+import Heading from '../../components/heading';
+import Loading from '../../components/loading';
+import './Popup.css';
 
 
 const Popup = () => {
@@ -87,30 +81,29 @@ const Popup = () => {
     setCompletionIdx(idx);
   }
 
-  const engine = new Styletron();
-  const [, theme] = useStyletron();
-
   return (
-    <StyletronProvider value={engine}>
-      <BaseProvider theme={DarkTheme}>
-        <Block height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
-          <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>CX Copilot</HeadingXSmall>
-          { clientId ? isLoading ?
-            <ParagraphMedium>Loading response for the ticket</ParagraphMedium>
-            :
-            <TicketData
-              clientId={clientId}
-              ticketId={ticketId}
-              completionIdx={completionIdx}
-              completionsLength={completions?.length}
-              completion={completions?.[completionIdx]}
-              setNextCompletionIdx={setNextCompletionIdx}/>
-            :
-            <Onboarding setClientId={setClientId}></Onboarding>
-          }
-        </Block>
-      </BaseProvider>
-    </StyletronProvider>
+    <>
+      {
+        clientId ? isLoading ?
+        <Loading/>
+        :
+        <>
+          <Heading/>
+          <TicketData
+            clientId={clientId}
+            ticketId={ticketId}
+            completionIdx={completionIdx}
+            completionsLength={completions?.length}
+            completion={completions?.[completionIdx]}
+            setNextCompletionIdx={setNextCompletionIdx}/>
+        </>
+        :
+        <>
+          <Heading/>
+          <Onboarding setClientId={setClientId}></Onboarding>
+        </>
+      }
+    </>
   );
 };
 

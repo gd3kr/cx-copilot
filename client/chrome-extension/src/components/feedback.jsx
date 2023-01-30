@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ApiClient from '../utils/client';
-import '../pages/Popup/Popup.css';
-import { ParagraphSmall } from "baseui/typography";
-import { Block } from "baseui/block";
-import { Check, Delete } from "baseui/icon";
-import { useStyletron } from 'baseui';
-
+import '../styles/globals.css'
 
 const Feedback = (props) => {
   const {
@@ -15,8 +10,6 @@ const Feedback = (props) => {
     completion,
     version,
   } = props;
-
-  const [, theme] = useStyletron();
 
   const API = new ApiClient();
 
@@ -31,19 +24,20 @@ const Feedback = (props) => {
     });
   };
 
-
   return (
-    <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
-      <ParagraphSmall>Did we answer the ticket?</ParagraphSmall>
-      <Check onClick={() => rateCompletion(1)} size={30} style={{
-        color: theme.colors.primary,
-        cursor: "pointer",
-        }}/>
-      <Delete onClick={() => rateCompletion(0)} size={30} style={{
-        color: theme.colors.primary,
-        cursor: "pointer",
-        }}/>
-    </Block>
+    <div class="flex space-x-2 justify-center">
+      <h2 class="feedback-header mb-0" id="headingFeedback">
+        Did we answer the ticket?
+      </h2>
+      <div>
+        <button type="button" onClick={() => rateCompletion(1)} class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
+          Yes
+        </button>
+        <button type="button" onClick={() => rateCompletion(0)} class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
+          No
+        </button>
+      </div>
+    </div>
   )
 
 }

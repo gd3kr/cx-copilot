@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Summary from './summary';
 import Citations from './citations';
-import '../pages/Popup/Popup.css';
-import { ParagraphSmall } from "baseui/typography";
-import { Block } from "baseui/block";
-import { StyledDivider } from "baseui/divider";
-import { Accordion, Panel } from "baseui/accordion";
-import { Button } from "baseui/button";
 import Feedback from './feedback';
-import { useStyletron } from 'baseui';
-
+import '../styles/globals.css'
 
 const TicketData = (props) => {
   const {
@@ -21,24 +14,12 @@ const TicketData = (props) => {
     setNextCompletionIdx,
   } = props;
 
-  const [, theme] = useStyletron();
-
   return (
-    <React.Fragment>
+    <>
 
-      <Block>
-        <Accordion overrides={ { Root: { style: { marginBottom: theme.sizing.scale600 } } } }>
-          <Panel title="Summary">
-            <Summary summary={completion.summary}/>
-          </Panel>
-          <Panel title="Citations" overrides={ { PanelContainer: { style: { maxHeight: '200px' } } } }>
-            <Citations citationsStr={completion.citations || '[]'}/>
-          </Panel>
-        </Accordion>
-      </Block>
+      <Summary summary={completion.summary}/>
+      <Citations citationsStr={completion.citations || '[]'}/>
 
-      {/* <StyledDivider $style={{color: theme.colors.primary}}/> */}
-      
       <Feedback
         clientId={clientId}
         ticketId={ticketId}
@@ -48,12 +29,18 @@ const TicketData = (props) => {
         version={1} // hardcoded version number
         setNextCompletionIdx={setNextCompletionIdx}/>
 
-      <Block>
-        <ParagraphSmall>{completionIdx+1}/{completionsLength}</ParagraphSmall>
-        <Button onClick={setNextCompletionIdx}>Next Suggestion</Button>
-      </Block>
+      <div class="flex space-x-2 justify-center">
+        <h2 class="completions-index-header mb-0" id="headingCompletionsIndex">
+          {completionIdx+1}/{completionsLength}
+        </h2>
+        <div>
+          <button type="button" onClick={setNextCompletionIdx} class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
+            Next Suggestion
+          </button>
+        </div>
+      </div>
 
-    </React.Fragment>
+    </>
   )
 
 }
