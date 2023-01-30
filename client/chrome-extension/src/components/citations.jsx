@@ -18,46 +18,50 @@ const Citations = (props) => {
 			  <dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
 
 				<Disclosure as="div" key={"citations"} className="pt-6">
-					<dt>
-						<Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
-						<span className="text-base font-semibold leading-7">Citations</span>
-						<span className="ml-6 flex h-7 items-center">
-							{open ? (
-							<PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
-							) : (
-							<MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
-							)}
-						</span>
-						</Disclosure.Button>
-					</dt>
-					<Disclosure.Panel as="dd" className="mt-2 pr-12">
-						{citations.map((citation, index) => (
-							<Disclosure as="div" key={`accordionCitation${index}`} className="pt-6">
-							{({ open }) => (
-								<>
-								<dt>
-									<Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
-									<span className="text-base font-semibold leading-7">{index+1} ({citation.score})</span>
-									<span className="ml-6 flex h-7 items-center">
-										{open ? (
-										<PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
-										) : (
-										<MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
-										)}
-									</span>
-									</Disclosure.Button>
-								</dt>
-								<Disclosure.Panel as="dd" className="mt-2 pr-12">
-									<p className="text-base leading-7 text-gray-600"><strong>Question</strong></p>
-									<p className="text-base leading-7 text-gray-600">{citation.question}</p>
-									<p className="text-base leading-7 text-gray-600"><strong>Answer</strong></p>
-									<p className="text-base leading-7 text-gray-600">{citation.answer}</p>
-								</Disclosure.Panel>
-								</>
-							)}
-							</Disclosure>
-						))}
-					</Disclosure.Panel>
+					{({ open }) => (
+						<>
+							<dt>
+								<Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
+								<span className="text-base font-semibold leading-7">Citations</span>
+								<span className="ml-6 flex h-7 items-center">
+									{open ? (
+									<PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
+									) : (
+									<MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
+									)}
+								</span>
+								</Disclosure.Button>
+							</dt>
+							<Disclosure.Panel as="dd" className="mt-2 pr-12">
+								{citations.map((citation, index) => (
+									<Disclosure as="div" key={`accordionCitation${index}`} className="pt-6">
+									{({ open }) => (
+										<>
+										<dt>
+											<Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
+											<span className="text-base font-semibold leading-7">{index+1} ({citation.score})</span>
+											<span className="ml-6 flex h-7 items-center">
+												{open ? (
+												<PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
+												) : (
+												<MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
+												)}
+											</span>
+											</Disclosure.Button>
+										</dt>
+										<Disclosure.Panel as="dd" className="mt-2 pr-12">
+											<p className="text-base leading-7 text-gray-600"><strong>Question</strong></p>
+											<p className="text-base leading-7 text-gray-600">{citation.question}</p>
+											<p className="text-base leading-7 text-gray-600"><strong>Answer</strong></p>
+											<p className="text-base leading-7 text-gray-600">{citation.answer}</p>
+										</Disclosure.Panel>
+										</>
+									)}
+									</Disclosure>
+								))}
+							</Disclosure.Panel>
+						</>
+					)}
 				</Disclosure>
 			  </dl>
 			</div>
