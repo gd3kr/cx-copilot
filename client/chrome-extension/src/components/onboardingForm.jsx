@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { setClientIdInStorage } from '../utils/util';
-
+import '../styles/globals.css'
 
 const Onboarding = (props) => {
 

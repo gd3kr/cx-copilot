@@ -17,7 +17,6 @@ const TicketData = (props) => {
 
   return (
     <>
-
       <Summary summary={completion.summary}/>
       <Citations citationsStr={completion.citations || '[]'}/>
 
@@ -35,7 +34,6 @@ const TicketData = (props) => {
         completionsLength={completionsLength}
         setNextCompletionIdx={setNextCompletionIdx}
         />
-
     </>
   )
 
