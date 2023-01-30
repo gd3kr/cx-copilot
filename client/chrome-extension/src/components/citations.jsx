@@ -61,9 +61,9 @@ const Citations = (props) => {
 										</h2>
 										<div id={`collapseCitation${index}`} class="accordion-collapse collapse show" aria-labelledby="headingOne"
 											data-bs-parent="#accordionExample">
-											<h4 class="question-header mb-0" id={`question${index}`}>Question</h4>
+											<div class="accordion-body py-4 px-5"><strong>Question</strong></div>
 											<div class="accordion-body py-4 px-5">{citation.question}</div>
-											<h4 class="answer-header mb-0" id={`answer${index}`}>Answer</h4>
+											<div class="accordion-body py-4 px-5"><strong>Answer</strong></div>
 											<div class="accordion-body py-4 px-5">{citation.answer}</div>
 										</div>
 									</div>

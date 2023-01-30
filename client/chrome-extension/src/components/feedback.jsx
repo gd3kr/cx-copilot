@@ -26,9 +26,9 @@ const Feedback = (props) => {
 
   return (
     <div class="flex space-x-2 justify-center">
-      <h2 class="feedback-header mb-0" id="headingFeedback">
+      <div className="mt-2 max-w-xl text-sm text-gray-500">
         Did we answer the ticket?
-      </h2>
+      </div>
       <div>
         <button type="button" onClick={() => rateCompletion(1)} class="inline-block px-6 py-2.5 bg-green-500 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-600 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-700 active:shadow-lg transition duration-150 ease-in-out">
           Yes
