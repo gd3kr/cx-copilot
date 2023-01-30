@@ -25,13 +25,8 @@ const Feedback = (props) => {
     });
   };
 
-  <button
-    type="button"
-    className="inline-flex items-center rounded-md border border-transparent bg-green-500 uppercase px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-  ></button>
-
   return (
-    <div className="flex space-x-2 justify-center">
+    <div className="flex space-x-2 justify-center py-4">
       <span className="text-base font-semibold leading-7">Did we answer the ticket?</span>
       <span className="isolate inline-flex rounded-md shadow-sm">
         <button
