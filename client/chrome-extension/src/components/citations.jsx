@@ -10,10 +10,10 @@ const Citations = (props) => {
 	const citations = JSON.parse(citationsStr)
 
 	return (
-    <div class="accordion" id="accordionCitations">
-      <div class="accordion-item bg-white border border-gray-200">
-        <h2 class="accordion-header mb-0" id="accordionCitationsHeading">
-          <button class="
+    <div className="accordion" id="accordionCitations">
+      <div className="accordion-item bg-white border border-gray-200">
+        <h2 className="accordion-header mb-0" id="accordionCitationsHeading">
+          <button className="
             accordion-button
             relative
             flex
@@ -32,15 +32,15 @@ const Citations = (props) => {
             Citations
           </button>
         </h2>
-        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="accordionCitationsHeading"
+        <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="accordionCitationsHeading"
           data-bs-parent="#accordionCitations">
-          <div class="accordion-body py-4 px-5">
+          <div className="accordion-body py-4 px-5">
             {
 			citations.map((citation, index) => (
-				<div class="accordion" id={`accordionCitation${index}`}>
-					<div class="accordion-item bg-white border border-gray-200">
-						<h2 class="accordion-header mb-0" id={`accordionCitationHeading${index}`}>
-							<button class="
+				<div className="accordion" id={`accordionCitation${index}`}>
+					<div className="accordion-item bg-white border border-gray-200">
+						<h2 className="accordion-header mb-0" id={`accordionCitationHeading${index}`}>
+							<button className="
 								accordion-button
 								relative
 								flex
@@ -59,12 +59,12 @@ const Citations = (props) => {
 								{index+1} ({citation.score})
 							</button>
 						</h2>
-						<div id={`collapseCitation${index}`} class="accordion-collapse collapse show" aria-labelledby={`accordionCitationHeading${index}`}
+						<div id={`collapseCitation${index}`} className="accordion-collapse collapse show" aria-labelledby={`accordionCitationHeading${index}`}
 							data-bs-parent={`#accordionCitation${index}`}>
-							<div class="accordion-body py-4 px-5"><strong>Question</strong></div>
-							<div class="accordion-body py-4 px-5">{citation.question}</div>
-							<div class="accordion-body py-4 px-5"><strong>Answer</strong></div>
-							<div class="accordion-body py-4 px-5">{citation.answer}</div>
+							<div className="accordion-body py-4 px-5"><strong>Question</strong></div>
+							<div className="accordion-body py-4 px-5">{citation.question}</div>
+							<div className="accordion-body py-4 px-5"><strong>Answer</strong></div>
+							<div className="accordion-body py-4 px-5">{citation.answer}</div>
 						</div>
 					</div>
 				</div>))

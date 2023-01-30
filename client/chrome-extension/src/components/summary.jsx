@@ -7,10 +7,10 @@ const Summary = (props) => {
   } = props;
 
   return (
-    <div class="accordion" id="accordionSummary">
-      <div class="accordion-item bg-white border border-gray-200">
-        <h2 class="accordion-header mb-0" id="accordionSummaryHeading">
-          <button class="
+    <div className="accordion" id="accordionSummary">
+      <div className="accordion-item bg-white border border-gray-200">
+        <h2 className="accordion-header mb-0" id="accordionSummaryHeading">
+          <button className="
             accordion-button
             relative
             flex
@@ -29,9 +29,9 @@ const Summary = (props) => {
             Summary
           </button>
         </h2>
-        <div id="collapseSummary" class="accordion-collapse collapse show" aria-labelledby="accordionSummaryHeading"
+        <div id="collapseSummary" className="accordion-collapse collapse show" aria-labelledby="accordionSummaryHeading"
           data-bs-parent="#accordionSummary">
-          <div class="accordion-body py-4 px-5">
+          <div className="accordion-body py-4 px-5">
             {summary}
           </div>
         </div>

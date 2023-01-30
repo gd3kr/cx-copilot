@@ -29,12 +29,12 @@ const TicketData = (props) => {
         version={1} // hardcoded version number
         setNextCompletionIdx={setNextCompletionIdx}/>
 
-      <div class="flex space-x-2 justify-center">
-        <h2 class="completions-index-header mb-0" id="headingCompletionsIndex">
+      <div className="flex space-x-2 justify-center">
+        <h2 className="completions-index-header mb-0" id="headingCompletionsIndex">
           {completionIdx+1}/{completionsLength}
         </h2>
         <div>
-          <button type="button" onClick={setNextCompletionIdx} class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
+          <button type="button" onClick={setNextCompletionIdx} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
             Next Suggestion
           </button>
         </div>
