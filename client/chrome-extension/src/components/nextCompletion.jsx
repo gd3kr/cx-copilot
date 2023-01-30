@@ -12,8 +12,12 @@ const NextCompletion = (props) => {
     <div className="flex space-x-2 justify-center py-4">
     <span className="text-base font-semibold leading-7">{completionIdx+1}/{completionsLength}</span>
     <div>
-        <button type="button" onClick={setNextCompletionIdx} className="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">
-        Next Suggestion
+        <button
+					type="button"
+					onClick={setNextCompletionIdx}
+					className="inline-flex items-center rounded-md border border-transparent bg-blue-600 uppercase px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					>
+					Next Suggestion
         </button>
     </div>
     </div>
