@@ -60,6 +60,7 @@ const saveTicketResponse = async () => {
     client_id: clientId,
     conversation_id: conversationId,
     response: replyText,
+    from_agent: true,
   });
 }
 
