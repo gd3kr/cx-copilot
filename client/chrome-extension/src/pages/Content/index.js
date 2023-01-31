@@ -15,6 +15,7 @@ import ApiClient from "../../utils/client";
 
 const API = new ApiClient();
 
+// inject copilot suggestion into the reply input box
 const injectCompletion = (platform, text) => {
   if (platform == Platforms.HelpScout) {
     // Clicks the "Reply" button so that reply textbox becomes visible
@@ -45,6 +46,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return;
 });
 
+// make a call to the API to save the actual ticket response sent by the CX agent
 const saveTicketResponse = async () => {
   // get reply text
   const replyText = document.getElementsByClassName(ReplyTextboxClassNames.HelpScout)[0].innerText;
@@ -61,6 +63,7 @@ const saveTicketResponse = async () => {
   });
 }
 
+// add a listener to the send button that triggers `saveTicketResponse`
 const addSendButtonListener = () => {
   try {
     // Timeout 0.5 seconds because the DOM element isn't visibile right away.
@@ -84,4 +87,5 @@ const addReplyButtonLister = () => {
   }, 500);
 }
 
+// add a listener to the reply button once the document loads
 document.addEventListener('DOMContentLoaded', addReplyButtonLister);
