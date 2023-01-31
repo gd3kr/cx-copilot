@@ -1,4 +1,8 @@
-import { Platforms, Domains } from "./constants"
+import {
+  Platforms,
+  Domains,
+  StorageVariables
+} from "./constants"
 import { getHelpScoutTicketId } from "./helpscout";
 
 
@@ -6,6 +10,11 @@ export const setClientIdInStorage = (clientId) => {
   chrome.storage.local.set({
     'client_id': clientId,
   })
+}
+
+export const getClientIdFromStorage = async () => {
+  const localStorageObject = await chrome.storage.local.get(StorageVariables.ClientId);
+  return localStorageObject.client_id;
 }
 
 

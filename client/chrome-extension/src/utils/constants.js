@@ -15,6 +15,10 @@ export const Domains = Object.freeze({
 	ZenDesk: "zendesk.com",
 })
 
+export const SendReplyButtonIds = Object.freeze({
+	HelpScout: "sendBtn",
+})
+
 export const ReplyButtonIds = Object.freeze({
 	HelpScout: "navReply",
 })

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import ApiClient from '../../utils/client';
 import { MessageRequestTypes, StorageVariables } from '../../utils/constants';
-import { getPlatformFromUrl, getTicketIdFromPlatformAndUrl } from '../../utils/util';
+import { getPlatformFromUrl, getTicketIdFromPlatformAndUrl, getClientIdFromStorage } from '../../utils/util';
 import Onboarding from '../../components/onboardingForm';
 import TicketData from '../../components/ticketData';
 import Heading from '../../components/heading';
@@ -42,10 +42,10 @@ const Popup = () => {
   }
 
   // init clientId, ticketId, platform
-  useEffect(() => {
-    chrome.storage.local.get(StorageVariables.ClientId).then((res) => {
-      setClientId(res?.client_id || 1);
-    });
+  useEffect((async () => {
+    const clientIdFromStorage = await getClientIdFromStorage();
+    setClientId(clientIdFromStorage);
+    
     chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
       const url = tabs[0].url;
       const p = getPlatformFromUrl(url);
@@ -53,7 +53,7 @@ const Popup = () => {
       const t = getTicketIdFromPlatformAndUrl(p, url);
       setTicketId(t);
     });
-  }, []);
+  }), []);
 
   // load completions once clientId, ticketId, and platform are set
   useEffect((async () => {
