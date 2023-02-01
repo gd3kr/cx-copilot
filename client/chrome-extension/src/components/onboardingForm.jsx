@@ -12,19 +12,16 @@ const Onboarding = (props) => {
     <div className="bg-white shadow sm:rounded-lg">
       <div className="px-4 py-5 sm:p-6">
         <h3 className="text-lg font-medium leading-6 text-gray-900">Onboarding</h3>
-        <div className="mt-2 max-w-xl text-sm text-gray-500">
-          <p>Enter your client ID.</p>
-        </div>
         <form className="mt-5 sm:flex sm:items-center">
           <div className="w-full sm:max-w-xs">
-            <label htmlFor="clientId" className="sr-only">
-              ClientID
+            <label htmlFor="clientId" className="text-gray-900 text-sm">
+              Enter your client ID
             </label>
             <input
               type="clientId"
               name="clientId"
               id="clientId"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               onChange={event => setId(event.currentTarget.value)}
             />
           </div>
