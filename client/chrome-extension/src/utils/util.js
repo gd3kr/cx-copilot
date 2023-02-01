@@ -6,10 +6,18 @@ import {
 import { getHelpScoutTicketId } from "./helpscout";
 
 
+export const clearClientIdInStorage = () => {
+  // chrome.storage.local.clear();
+  chrome.storage.local.set({
+    'client_id': null,
+  });
+}
+
+
 export const setClientIdInStorage = (clientId) => {
   chrome.storage.local.set({
     'client_id': clientId,
-  })
+  });
 }
 
 export const getClientIdFromStorage = async () => {

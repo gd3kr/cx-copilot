@@ -7,6 +7,7 @@ import TicketData from '../../components/ticketData';
 import Heading from '../../components/heading';
 import Loading from '../../components/loading';
 import '../../styles/globals.css';
+import ClearClientIdButton from '../../components/clearClientIdButton';
 
 
 const Popup = () => {
@@ -85,10 +86,14 @@ const Popup = () => {
     <>
       {
         clientId ? isLoading ?
-        <Loading/>
+        <>
+          <Loading/>
+          <ClearClientIdButton setClientId={setClientId}/>
+        </>
         :
         <>
           <Heading/>
+          <ClearClientIdButton setClientId={setClientId}/>
           <TicketData
             clientId={clientId}
             ticketId={ticketId}

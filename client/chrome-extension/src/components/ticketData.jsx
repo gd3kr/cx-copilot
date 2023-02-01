@@ -13,6 +13,7 @@ const TicketData = (props) => {
     completionsLength,
     completion,
     setNextCompletionIdx,
+    setClientId,
   } = props;
 
   return (
