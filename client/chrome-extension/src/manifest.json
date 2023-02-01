@@ -30,7 +30,8 @@
       ],
       "css": [
         "content.styles.css"
-      ]
+      ],
+      "run_at": "document_start"
     }
   ],
   "devtools_page": "devtools.html",

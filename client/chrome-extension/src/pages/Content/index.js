@@ -1,202 +1,92 @@
-const HELPSCOUT_DOMAIN = "helpscout.net"
-const INTERCOM_DOMAIN = "intercom.com"
-const ZENDESK_DOMAIN = "zendesk.com"
+import {
+  MessageRequestTypes,
+  Platforms,
+  ReplyButtonIds,
+  ReplyTextboxClassNames,
+  SendReplyButtonIds,
+  StorageVariables
+} from "../../utils/constants";
+import {
+  getClientIdFromStorage,
+  getPlatformFromUrl,
+  getTicketIdFromPlatformAndUrl
+} from "../../utils/util";
+import ApiClient from "../../utils/client";
 
-const INTERCOM_REPLY_TEXTBOX_CLASSNAME = "intercom-interblocks-align-left embercom-prosemirror-composer-block-selected"
-const HELPSCOUT_REPLY_BUTTON_CLASSNAME = "navReply"
-const HELPSCOUT_REPLY_TEXTBOX_CLASSNAME = "redactor_redactor redactor_editor"
+const API = new ApiClient();
 
-const HELPSCOUT_SEND_REPLY_BUTTON_ID = "sendBtn"
-
-async function scrapeTicketData(currentURL) {
-    console.log("Hello from CX Copilot", currentURL)
-
-    const platform = getCXPlatformName(currentURL);
-
-    if (platform == 'not_supported') {
-        return;
-    }
-
-    let ticketID = '';
-
-    if (platform == 'helpscout') {
-        ticketID = scrapeHelpscout(currentURL);
-        const response = await insertReply(currentURL, ticketID, platform);
-        return response
-    }
-
-    if (platform == 'intercom') {
-        ticketID = scrapeIntercom(currentURL);
-    }
-}
-
-// // Listen for Tab Updated
-// chrome.runtime.onMessage.addListener(
-//     function (request, sender, sendResponse) {
-//         if (request.message === 'TabUpdated') {
-//             let currentURL = request.url;
-//             scrapeTicketData(currentURL);
-//         }
-//     });
-
-
-const addSendReplyListener = () => {
-    // let sendButton = document.getElementById('cancelTicket');
-    let sendButton = document.getElementById(HELPSCOUT_SEND_REPLY_BUTTON_ID);
-    sendButton.addEventListener('click', async () => {
-        const reply = document.getElementsByClassName(HELPSCOUT_REPLY_TEXTBOX_CLASSNAME)[0].innerText
-
-        const clientIdLocal = await chrome.storage.local.get('client_id')
-        const clientId = clientIdLocal.client_id.split("_")[0]
-
-        const conversationId = scrapeHelpscout(document.location.href)
-
-        const url = '{YOUR_URL}/tickets';
-        const httpResponse = await fetch(url, {
-            method: 'POST',
-            headers: new Headers({ 'content-type': 'application/json' }),
-            body: JSON.stringify({
-                conversation_id: new Number(conversationId),
-                client_id: clientId ? new Number(clientId) : null,
-                response: reply,
-            })
-        });
-        console.log(httpResponse)
-    });
-    console.log('send reply listener added')
-};
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log(request)
-    if (request.type == 'get_completions') {
-        scrapeTicketData(document.location.href).then((res) => {
-            sendResponse(res)
-        })
-    } else if (request.type == 'switch_completion') {
-        const platform = getCXPlatformName(document.location.href);
-        if (platform == 'not_supported') {
-            return;
-        }
-        let ticketID = '';
-        if (platform == 'helpscout') {
-            ticketID = scrapeHelpscout(document.location.href);
-            setTimeout(() => {
-                injectHelpscoutReply(request.completion);
-            }, 500);
-        }
-    }
-    return true;
-});
-
-async function insertReply(currentURL, conversationID, platform) {
-    let clientId = null;
-    try {
-        const clientIdLocal = await chrome.storage.local.get('client_id')
-        clientId = clientIdLocal.client_id.split("_")[0]
-    } catch (e) {
-        console.error(e)
-    }
-
-    const url = '{YOUR_URL}/completions';
-    const httpResponse = await fetch(url, {
-        method: 'POST',
-        headers: new Headers({ 'content-type': 'application/json' }),
-        body: JSON.stringify({
-            conversation_id: new Number(conversationID),
-            use_cached: true,
-            cx_platform: platform,
-            client_id: clientId ? new Number(clientId) : null,
-        })
-    });
-    const responseBody = await httpResponse.json()
-
+// inject copilot suggestion into the reply input box
+const injectCompletion = (platform, text) => {
+  if (platform == Platforms.HelpScout) {
     // Clicks the "Reply" button so that reply textbox becomes visible
-    document.getElementById(HELPSCOUT_REPLY_BUTTON_CLASSNAME).click();
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', addSendReplyListener);
-    } else {
-        addSendReplyListener();
-    }
-
+    document.getElementById(ReplyButtonIds.HelpScout).click();
     // Timeout 0.5 seconds because the reply textbox ("redactor_redactor redactor_editor")
     // DOM element isn't visibile right away. We have to wait for the Click action to complete
     // and the DOM element to become visible
     setTimeout(() => {
-        injectHelpscoutReply(responseBody.completions[0].text)
-    }, 500)
-
-    return responseBody;
+      document.getElementsByClassName(ReplyTextboxClassNames.HelpScout)[0].innerText = text;
+    }, 500);
+  }
 }
 
-function getCXPlatformName(url){
-    if (url.split(HELPSCOUT_DOMAIN).length > 1) {
-        return 'helpscout'
-    }
+// add listener for copilot suggestion injection
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const {
+    type,
+  } = request;
 
-    if (url.split(INTERCOM_DOMAIN).length > 1) {
-        return 'intercom'
-    }
+  if (type == MessageRequestTypes.InjectCompletion) {
+    const {
+      platform,
+      text,
+    } = request;
+    injectCompletion(platform, text);
+  }
+  sendResponse(true);
+  return;
+});
 
-    if (url.split(ZENDESK_DOMAIN).length > 1) {
-        return 'zendesk'
-    }
-
-    return 'not_supported'
+// make a call to the API to save the actual ticket response sent by the CX agent
+const saveTicketResponse = async () => {
+  // get reply text
+  const replyText = document.getElementsByClassName(ReplyTextboxClassNames.HelpScout)[0].innerText;
+  // get client id
+  const clientId = await getClientIdFromStorage();
+  // get conversation id
+  const platform = getPlatformFromUrl(document.location.href);
+  const conversationId = getTicketIdFromPlatformAndUrl(platform, document.location.href);
+  // post ticket response
+  await API.post('/tickets', {
+    client_id: clientId,
+    conversation_id: conversationId,
+    response: replyText,
+    from_browser: true,
+  });
 }
 
-function scrapeIntercom(url) {
-    // URL example: https://app.intercom.com/a/inbox/g4tvre/inbox/admin/67375/conversation/3624?view=List
-
-    // check if intercom URL is a conversation page
-    if (url.split("//app.intercom.com/a/inbox/").length < 2) {
-        return '';
-    }
-
-    // ids = 3624?view=List
-    let ids = url.split('/conversation/')[1];
-
-    // conversationID = 2199011258
-    let conversationID = ids.split('?')[0];
-
-    // threadID = 891142
-    // let threadID = ids.split('/')[1].split('?folderId=')[0]
-
-    // folderID = 39835
-    // let folderID = ids.split('/')[1].split('?folderId=')[1]
-
-    console.log("Intercom conversation ID: ", conversationID)
-
-    return conversationID
+// add a listener to the send button that triggers `saveTicketResponse`
+const addSendButtonListener = () => {
+  try {
+    // Timeout 0.5 seconds because the DOM element isn't visibile right away.
+    // We have to wait for the DOM elements to become visible
+    setTimeout(() => {
+      const sendButton = document.getElementById(SendReplyButtonIds.HelpScout);
+      sendButton.addEventListener('click', saveTicketResponse);
+    }, 500);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
-
-function scrapeHelpscout(url) {
-    // URL example: https://secure.helpscout.net/conversation/2199011258/891142?folderId=39835
-
-    // check if helpscout URL is a conversation page
-    if (url.split("//secure.helpscout.net/conversation").length < 2) {
-        return '';
-    }
-
-    // ids = 2110021258/88342?folderId=3894767
-    let ids = url.split('/conversation/')[1];
-
-    // conversationID = 2199011258
-    let conversationID = ids.split('/')[0];
-
-    // threadID = 891142
-    // let threadID = ids.split('/')[1].split('?folderId=')[0]
-
-    // folderID = 39835
-    // let folderID = ids.split('/')[1].split('?folderId=')[1]
-
-    console.log("Helpscout ConversationID: ", conversationID)
-
-    return conversationID
+// add listener for `reply` button -> add listener to `send` button which is now visible
+const addReplyButtonLister = () => {
+  // Timeout 0.5 seconds because the DOM element isn't visibile right away.
+  // We have to wait for the DOM elements to become visible
+  setTimeout(() => {
+    const replyButton = document.getElementById(ReplyButtonIds.HelpScout);
+    replyButton.addEventListener('click', addSendButtonListener);
+  }, 500);
 }
 
-function injectHelpscoutReply(reply) {
-    document.getElementsByClassName(HELPSCOUT_REPLY_TEXTBOX_CLASSNAME)[0].innerText = reply
-}
-// [...document.getElementsByClassName("intercom-interblocks-align-left embercom-prosemirror-composer-block-selected")][0].innerText = "yo"
+// add a listener to the reply button once the document loads
+document.addEventListener('DOMContentLoaded', addReplyButtonLister);

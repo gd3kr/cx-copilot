@@ -1,145 +1,115 @@
 import React, {useEffect, useState} from 'react';
-import './Popup.css';
-import { Client as Styletron } from 'styletron-engine-atomic';
-import { Provider as StyletronProvider } from 'styletron-react';
-import { BaseProvider, DarkTheme, useStyletron} from 'baseui';
-import {
-    HeadingXSmall, 
-    ParagraphMedium,
-    ParagraphSmall
-} from "baseui/typography";
-import {Block} from "baseui/block";
-import {StyledDivider} from "baseui/divider";
-import {Accordion, Panel} from "baseui/accordion";
-import {Button} from "baseui/button";
-import {Check, Delete} from "baseui/icon";
-import {FormControl} from "baseui/form-control";
-import {Input} from "baseui/input";
-import Citations from '../../components/citations';
+import ApiClient from '../../utils/client';
+import { MessageRequestTypes, StorageVariables } from '../../utils/constants';
+import { getPlatformFromUrl, getTicketIdFromPlatformAndUrl, getClientIdFromStorage } from '../../utils/util';
+import Onboarding from '../../components/onboardingForm';
+import TicketData from '../../components/ticketData';
+import Heading from '../../components/heading';
+import Loading from '../../components/loading';
+import '../../styles/globals.css';
+import ClearClientIdButton from '../../components/clearClientIdButton';
 
-
-const PopupContent = (props) => {
-    const {isLoading, completions} = props;
-
-    const [clientId, setClientId] = useState(null);
-    const [inputClientId, setInputClientId] = useState(null);
-    const [,theme] = useStyletron()
-
-    const [completionIdx, setCompletionIdx] = useState(0);
-
-    useEffect(() => {
-        chrome.storage.local.get('client_id').then((res) => {
-            setClientId(res.client_id)
-        });
-    }, []);
-
-    const changeCompletionsIdx = () => {
-        const idx = completionIdx+1 >= completions.length ? 0 : completionIdx+1;
-        setCompletionIdx(idx);
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, { type: "switch_completion", completion: completions[idx]?.text }, () => {});
-        });
-    }
-
-    const rateCompletion = async (rating) => {
-        const url = 'YOUR_URL';
-        fetch(url, {
-            method: 'POST',
-            headers: new Headers({ 'content-type': 'application/json' }),
-            body: JSON.stringify({
-                client_id: clientId,
-                ticket_id: ticketId,
-                pipeline_id: completionIdx+1,   // pipeline_id starts at 1 not 0
-                version: version,
-                rating: rating,
-                completion: completions[completionIdx].text,
-            })
-        })
-    };
-
-    const setClientIDCallback = (clientId) => {
-        setClientId(clientId)
-        chrome.storage.local.set({
-            'client_id': clientId,
-        })
-    }
-
-    return (
-        <Block height={"100vw"} display={"flex"} flexDirection={"column"} backgroundColor={theme.colors.backgroundPrimary} alignContent={'center'} justifyContent={'center'}>
-            <HeadingXSmall color={theme.colors.primary} alignSelf={'center'}>CX Copilot</HeadingXSmall>
-            { clientId ? isLoading ?
-                <ParagraphMedium>Loading response for the ticket</ParagraphMedium>
-                :
-                <React.Fragment>
-                    <Accordion overrides={ { Root: { style: { marginBottom: theme.sizing.scale600 } } } }>
-                        <Panel title="Summary"><ParagraphMedium color={theme.colors.primary}>{completions[completionIdx]?.summary}</ParagraphMedium></Panel>
-                        <Panel title="Citations" overrides={ { PanelContainer: { style: { maxHeight: '200px' } } } }>
-                            <Citations citationsStr={completions[completionIdx]?.citations || '[]'}></Citations>
-                        </Panel>
-                    </Accordion>
-                    <StyledDivider $style={{color: theme.colors.primary}}/>
-                    
-                    <Block padding={theme.sizing.scale600} height={"100vw"} display={"flex"} flexDirection={"row"} backgroundColor={theme.colors.backgroundPrimary} alignItems={'center'} justifyContent={'space-between'}>
-                        <ParagraphSmall>Did we answer the ticket?</ParagraphSmall>
-                        <Check onClick={() => rateCompletion(1)} size={30} style={{
-                            color: theme.colors.primary,
-                            cursor: "pointer",
-                        }}/>
-                        <Delete onClick={() => rateCompletion(0)} size={30} style={{
-                            color: theme.colors.primary,
-                            cursor: "pointer",
-                        }}/>
-                    </Block>
-                    <Block>
-                        <ParagraphSmall>{completionIdx+1}/{completions.length}</ParagraphSmall>
-                        <Button onClick={changeCompletionsIdx}>Next Suggestion</Button>
-                    </Block>
-                </React.Fragment>
-                :
-                <Block padding={theme.sizing.scale200} display={"flex"} flexDirection={"column"} justifyContent={"space-between"}>
-                    <Block display={"flex"} flexDirection={"column"}>
-                        <FormControl label="Client ID" caption="Please enter clientID provided during onboarding">
-                            <Input
-                                id="input-id"
-                                value={inputClientId}
-                                onChange={event => setInputClientId(event.currentTarget.value)}
-                            />
-                        </FormControl>
-                    </Block>
-                    <Button size={"mini"} onClick={() => setClientIDCallback(inputClientId)}>Submit</Button>
-                </Block>
-            }
-        </Block>
-    );
-
-}
 
 const Popup = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [completions, setCompletions] = useState([]);
+  const [clientId, setClientId] = useState(null);
+  const [platform, setPlatform] = useState(null);
+  const [ticketId, setTicketId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [completions, setCompletions] = useState([]);
+  const [completionIdx, setCompletionIdx] = useState(0);
 
-    useEffect(() => {
-        setIsLoading(true);
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, {type: "get_completions"}, (response) => {
-                setIsLoading(false);
-                setCompletions(response.completions);
-            });
-        });
-    }, []);
-    const engine = new Styletron();
-    const [, theme] = useStyletron();
+  const API = new ApiClient();
 
-    return (
-    <StyletronProvider value={engine}>
-        <BaseProvider theme={DarkTheme}>
-        <PopupContent
-            completions={completions}
-            isLoading={isLoading}
-            />
-        </BaseProvider>
-    </StyletronProvider>
-    );
+  const loadCompletions = async () => {
+    setIsLoading(true);
+    const result = await API.post('/completions', {
+      client_id: clientId,
+      conversation_id: ticketId,
+      use_cached: true,
+      cx_platform: platform,
+    });
+    setCompletions(result.completions);
+    setIsLoading(false);
+  };
+
+  const triggerInjectCompletion = (idx) => {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        type: MessageRequestTypes.InjectCompletion,
+        text: completions?.[idx].text,
+        platform: platform,
+      }, (response) => {});
+    });
+  }
+
+  // init clientId, ticketId, platform
+  useEffect((async () => {
+    const clientIdFromStorage = await getClientIdFromStorage();
+    setClientId(clientIdFromStorage);
+    
+    chrome.tabs.query({active: true, currentWindow: true}, async (tabs) => {
+      const url = tabs[0].url;
+      const p = getPlatformFromUrl(url);
+      setPlatform(p);
+      const t = getTicketIdFromPlatformAndUrl(p, url);
+      setTicketId(t);
+    });
+  }), []);
+
+  // load completions once clientId, ticketId, and platform are set
+  useEffect((async () => {
+    if (!clientId || !ticketId || !platform) return;
+    await loadCompletions();
+  }), [clientId, ticketId, platform]);
+
+  // reset completionIdx to 0 after new completions load
+  useEffect(() => {
+    if (completions?.length) {
+      triggerInjectCompletion(0);
+      setCompletionIdx(0);
+    }
+  }, [completions]);
+
+  // trigger inject completion when index state changes
+  useEffect(() => {
+    if (completions?.length) {
+      triggerInjectCompletion(completionIdx);
+    }
+  }, [completionIdx]);
+
+  const setNextCompletionIdx = () => {
+    const idx = completionIdx+1 >= completions.length ? 0 : completionIdx+1;
+    setCompletionIdx(idx);
+  }
+
+  return (
+    <>
+      {
+        clientId ? isLoading ?
+        <>
+          <Loading/>
+          <ClearClientIdButton setClientId={setClientId}/>
+        </>
+        :
+        <>
+          <Heading/>
+          <ClearClientIdButton setClientId={setClientId}/>
+          <TicketData
+            clientId={clientId}
+            ticketId={ticketId}
+            completionIdx={completionIdx}
+            completionsLength={completions?.length}
+            completion={completions?.[completionIdx]}
+            setNextCompletionIdx={setNextCompletionIdx}/>
+        </>
+        :
+        <>
+          <Heading/>
+          <Onboarding setClientId={setClientId}></Onboarding>
+        </>
+      }
+    </>
+  );
 };
 
 export default Popup;
