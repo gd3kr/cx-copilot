@@ -1,114 +1,123 @@
-# Python Project Template
+# cx-copilot
 
-This project follows the Python Standards declared in [PEP 621](https://peps.python.org/pep-0621/).
-This uses a pyproject.yaml to configuration the project. In this example, [flit](https://pypi.org/project/flit/) is used to simplify the build process, and publish to pypi.
+🤖 Empower your CX team with open-source AI-powered response auto-drafting. 🤖
 
-## Project Organization
+## 🤔 What is cx-copilot?
 
-- .devcontainer - This directory contains required files for creating a [Codespace](https://github.com/features/codespaces).
-- .github
-  - workflows - Contains GitHub Actions used for building, testing and publishing.
-    - publish-test.yml - Publish wheels to [https://test.pypi.org/](https://test.pypi.org/)
-    - publish.yml - Publish wheels to [https://pypi.org/](https://pypi.org/)
-    - pull-request.yml - Build and Test pull requests before commiting to main.
-    - template-sync.yml - Update GitHub Repo with enhancments to base template
-- docs - collect documents (default format .md)
-- src - place new source code here
-  - python_package - sample package (this can be deleted when creating a new repository)
-- tests - contains Python based test cases to validation src code
-- .pre-commit-config.yaml - Contains various pre-check fixes for Python
-- .templateversionrc - used to track template version usage.
-- MANIFEST.in - Declares additional files to include in Python whl
-- pyproject.toml - Python Project Declaration
-- ws.code-workspace - Recommended configurations for [Visual Studio Code](https://code.visualstudio.com/)
+An open source library that lets you leverage LLMs and latest advancements in AI to automate customer support interactions. By connecting a Large Language Model (LLM) to your knowledge base and historical support tickets via embeddings & vector searching, you can accurately auto-draft responses to all customer requests.
 
-## pyproject.toml
+## 🖥 Where can it be used?
 
-The following sections are defined in the configuration toml.
+You can use cx-copilot to auto-draft responses in Helpdesk, Intercom, Support Inboxes, Zendesk, and anywhere else you store & respond to customer requests.
 
-- build-system
-- project
-  - optional-dependencies
-  - urls
-- tool
-  - bandit
-  - coverage
-    - run
-    - report
-  - pyright
-  - pytest
-  - tox
-  - pylint
-    - MESSAGES CONTROL
-    - REPORTS
-    - REFACTORING
-    - BASIC
-    - FORMAT
-    - LOGGING
-    - MISCELLANEOUS
-    - SIMILARITIES
-    - SPELLING
-    - STRING
-    - TYPECHECK
-    - VARIABLES
-    - CLASSES
-    - DESIGN
-    - IMPORTS
-    - EXCEPTIONS
-
-### build-system
-TODO: add info on flit configuration
-
-### project
-This section defines the project metadata, which may have been previously contained in a setup.py file.
-
-#### optional-dependencies
-This are otpimal dependancey groups that can be installed via 'pip install .[tests]'.
-One group is included for dependancies required for testing. A second group is included for PySpark based dependancies.
-
-### tool
-This section defines the configurations for additional tools used to format, lint, type-check, and analysis Python code.
-
-#### bandit
-Performs Security Static Analysis checks on code base.
-
-#### black
-Auto-formats code
-
-#### coverage
-Configures code coverage reports generatated during testing.
-
-#### pyright
-Performs static type checking on Python.
-
-#### pytest
-Configures various test markers used during testing.
-
-#### pylint
-Performs Linting and Static Analysis. Any modifictions made by the auto-formater (black) are always considered correct.
-
-## Publish to PyPi from GitHub
-In order to publish to PyPi, a repostirory secret must be created, "PYPI_PASSWORD". In order to publish to the Test PyPi, a second secret must be added, "TEST_PYPI_PASSWORD". 
+## ⚡️ Installation
 
 
-## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+## 🚀 Live Demo
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-## Trademarks
+## 📖 How does it work?
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
-trademarks or logos is subject to and must follow
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+The basis of cx-copilot is embedding, vector storing and vector searching. Vector embeddings are a way to represent text as a series of numbers in such a way that you can perform mathematical operations, such as similarity comparison. By first embedding all previous historical customer request tickets using an embedding model (like [text-embedding-ada-002](https://openai.com/blog/new-and-improved-embedding-model/) from OpenAI) and storing the embeddings & the paired response from your company in a vector database, you can then perform a vector search for incoming support tickets, returning the closest-matching tickets based on cosine similarity. The final step is to prompt a Large Language Model (LLM) with your team's responses to the closest-matching historical tickets, generating an auto-drafted response which will answer your customer’s query while conforming to your tone & formatting tendencies.
+
+## 🧰 Integrations
+
+| Integrations |  |
+|-------|---------|
+| <img src="https://style.helpscout.com/images/logo/help-scout-logo-circle-blue.svg" alt="Helpscout logo" height="50px"> | Helpscout |
+| <img src="https://www.svgrepo.com/download/303161/gmail-icon-logo.svg" alt="Gmail logo" height="50px"> | Gmail |
+| <img src="https://cdn.worldvectorlogo.com/logos/intercom-1.svg" alt="Intercom logo" height="50px"> | Intercom (coming soon) |
+| <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Zendesk_logo.svg/2560px-Zendesk_logo.svg.png" alt="Zendesk logo" height="50px"> | Zendesk (coming soon) |
+| <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="Discord logo" height="50px"> | Discord (coming soon) |
+
+## 📱 Community
+
+Join the [Discord community for cx-copilot](https://discord.gg/XhPnzxhm6y) for support & project updates.
+
+## 👩‍💻 Contributing
+
+### Installation
+To install this package, simply run the following command:
+
+```
+pip install cx_copilot
+```
+
+To install for local development use:
+
+```
+flit install [--symlink] [--python path/to/python]
+```
+
+
+### Development
+This package is built on top of abstract classes that can be implemented for different customer support ticket providers. This ensures interoperability and allows for easy development. There are examples of how to use each of these classes in the `examples` directory. The source code for the package is located in the `src` directory.
+
+Please always create base classes and implement them for specific use cases.
+
+For example:
+
+The cache class is an abstract class with the following definition:
+
+```
+class Cache:
+    def put(self, key: str, value: str):
+        pass
+
+    def get(self, key: str, default_value: Optional[str] = None) -> str:
+        pass
+```
+
+And the redis class implements that abstract class with the following definition
+
+```
+class RedisCache(Cache):
+    instance: redis.Redis = None
+
+    def __init__(self, host: str, port: int, db: int):
+        self.instance = redis.Redis(host=host, port=port, db=db)
+
+    def put(self, key: str, value: str):
+        self.instance.set(key, value)
+        pass
+
+    def get(self, key: str, default_value: Optional[str] = None) -> str:
+        result = self.instance.get(key)
+        return result or default_value
+```
+
+so our compound block can be agnostic on which provider to use. It's set during initialization.
+
+```
+ def get_ticket_response(self, ticket_id: str, use_cached=True, cache_response=True, max_tokens=2000):
+        content = self.ticket_repo.get_conversation_by_id(conversation_id=ticket_id)
+        if use_cached:
+            try:
+                value = self.cache_block.get(ticket_id)
+                if value is not None:
+                    return value
+            except Exception:
+                pass
+```
+
+Whenever introducing a new block either follow the abstract classes already defined or introduce a new one.
+
+
+### Usages
+
+The examples and client directory has some rich examples of how to use this library. For instance under the examples/client/discord_example_client.py you can see an example of a discord bot that you can deploy to answer support queries.
+
+```
+@bot.slash_command(name="autofill")
+async def autofill(ctx):
+    reply = cx.get_ticket_response(ctx.channel_id, cache_response=True, use_cached=True)
+    await ctx.respond(reply, ephemeral=True)
+```
+
+Please create a PR with your changes. Once merged, a GitHub action will bump up the minor version. For major version changes, please contact the contributors(eng@caesarhq.com).
+
+# 🚀 Deployment
+
+If you are having issues self hosting, we offer a deployed version. Please contact us at eng@caesarhq.com.
