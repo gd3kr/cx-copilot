@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # cx-copilot
 
 🤖 Empower your CX team with open-source AI-powered response auto-drafting. 🤖
