@@ -19,7 +19,7 @@ const TicketData = (props) => {
   return (
     <>
       <Summary summary={completion.summary}/>
-      <Citations citationsStr={completion.citations || '[]'}/>
+      <Citations citations={completion.citations || []}/>
 
       <Feedback
         clientId={clientId}

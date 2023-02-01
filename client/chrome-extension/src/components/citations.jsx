@@ -6,10 +6,8 @@ import '../styles/globals.css'
 
 const Citations = (props) => {
 	const {
-		citationsStr
+		citations
 	} = props
-
-	const citations = JSON.parse(citationsStr)
 
 	return (
 		<div className="bg-white">
