@@ -12,7 +12,7 @@ class ApiClient {
         url,
         config,
         headers = {},
-        timeout = 10000,
+        timeout = 60000,
       ) => {
         const setHeaders = { ... headers };
 
