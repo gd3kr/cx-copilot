@@ -7,6 +7,7 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "dependencies": {
+    "@fontsource/inter": "^4.5.15",
     "@headlessui/react": "^1.7.8",
     "@heroicons/react": "^2.0.14",
     "@hot-loader/react-dom": "^17.0.2",
