@@ -114,7 +114,6 @@ const Popup = (props) => {
           items-center
           mt-10
           animate-spin
-
           "
           
             >

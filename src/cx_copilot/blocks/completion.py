@@ -22,9 +22,11 @@ def check_key_decorator(func):
 class GPTCompletionBlock(CompletionBlock):
     open_ai_key: Optional[str] = None
 
-    def __init__(self, open_ai_key: str) -> None:
+    def __init__(self, open_ai_key: str, use_helicone: bool = False) -> None:
         self.open_ai_key = open_ai_key
         openai.api_key = open_ai_key
+        if use_helicone:
+            openai.api_base = "https://oai.hconeai.com/v1"
 
     @check_key_decorator
     def get_completion(self, prompt: str, max_tokens: int, temperature: int) -> str:
