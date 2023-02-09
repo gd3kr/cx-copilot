@@ -63,7 +63,16 @@ const SingleConversationAutoResponse = () => {
         })
   }, [context])
 
+    useEffect(() => {
+        context.listMessages().then((res) => setMessages(res.results))
+    }, [context])
+
+
   useEffect(() => {
+      if (context.conversation.id == null) {
+          return;
+      }
+
         const httpResponse = fetch(`${url}/get_auto_response`, {
             method: 'POST',
             headers: new Headers({ 'content-type': 'application/json' }),
@@ -86,7 +95,7 @@ const SingleConversationAutoResponse = () => {
           }
         })
         }));
-  }, [context.conversation.id])
+  }, [context.conversation.id, messages])
     useEffect(() => {
 
     }, [messages])
