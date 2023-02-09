@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useFrontContext} from "./providers/frontContextProvider";
-import {Accordion, AccordionSection, PluginFooter, PluginHeader, PluginLayout} from "@frontapp/ui-kit";
+import {Accordion, AccordionSection, PluginFooter, PluginHeader, PluginLayout, Skeleton} from "@frontapp/ui-kit";
 import {useEffect, useState} from "react";
 import {useHotkeys} from "react-hotkeys-hook";
 
@@ -51,6 +51,7 @@ const SingleConversationAutoResponse = () => {
    const context = useFrontContext();
   const [open, setIsOpen] = useState(true);
   const [pipelineResponse, setPipelineResponse] = useState(null);
+  const [responseLoading, setResponseLoading] = useState(false)
   const [messages, setMessages] = useState([]);
   useHotkeys('ctrl+s', () => {
       fetch(`${url}/index_conversation`, {
@@ -73,6 +74,7 @@ const SingleConversationAutoResponse = () => {
           return;
       }
 
+      setResponseLoading(true);
         const httpResponse = fetch(`${url}/get_auto_response`, {
             method: 'POST',
             headers: new Headers({ 'content-type': 'application/json' }),
@@ -84,6 +86,7 @@ const SingleConversationAutoResponse = () => {
             })
         }).then((res) => res.json().then((parsed) => {
             setPipelineResponse(parsed);
+
             context.createDraft({
           content: {
               body: parsed.completion,
@@ -94,12 +97,13 @@ const SingleConversationAutoResponse = () => {
               originalMessageId: messages[0].id,
           }
         })
-        }));
+        })).finally(() => setResponseLoading(false));
   }, [context.conversation.id, messages])
     useEffect(() => {
 
     }, [messages])
    return <div className="App-sidebar-body">
+       {responseLoading? <Skeleton variant={"dark"}/>:
     <Accordion>
         <AccordionSection isOpen={open} onSectionToggled={setIsOpen} id={1} title={'Summary'}>
             {pipelineResponse?.summary}
@@ -107,7 +111,7 @@ const SingleConversationAutoResponse = () => {
         <AccordionSection id={2} title={'Citations'}>
             {pipelineResponse?.citations}
         </AccordionSection>
-    </Accordion>
+    </Accordion>}
    </div>
 }
 export default App;
