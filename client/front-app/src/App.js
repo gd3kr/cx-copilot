@@ -69,7 +69,7 @@ const SingleConversationAutoResponse = () => {
 
 
   useEffect(() => {
-      if (context.conversation.id == null) {
+      if (context.conversation.id == null || messages.length === 0) {
           return;
       }
 
