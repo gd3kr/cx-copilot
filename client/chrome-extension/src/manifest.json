@@ -50,6 +50,20 @@
         "default": "Ctrl+Shift+R",
         "mac": "Command+Shift+Y"
       }
+    },
+   "next_command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+N",
+        "mac": "Command+Shift+Right"
+      },
+      "description": "Run \"foo\" on the current page."
+    },
+   "previous_command": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+N",
+        "mac": "Command+Shift+Left"
+      },
+      "description": "Run \"foo\" on the current page."
     }
-  }
+ }
 }

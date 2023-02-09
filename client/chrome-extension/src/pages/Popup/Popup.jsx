@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import ApiClient from "../../utils/client";
 import { MessageRequestTypes, StorageVariables } from "../../utils/constants";
 import {
@@ -87,11 +87,22 @@ const Popup = () => {
     }
   }, [completionIdx]);
 
-  const setNextCompletionIdx = (subtract) => {
-    if (subtract === undefined || !subtract ) subtract = false;
-    const idx = (completionIdx + (subtract ? -1 : 1) + completions.length) % completions.length;
-    setCompletionIdx(idx);
-  };
+  const setNextCompletionIdx = useCallback((subtract) => {
+    setCompletionIdx((completionIdx) => {
+      if (subtract === undefined || !subtract ) subtract = false;
+      const idx = (completionIdx + (subtract ? -1 : 1) + completions.length) % completions.length;
+      return idx
+    });
+  }, [completions]);
+
+  const onChromeMessage = useCallback((command) => {
+    if (completions.length == 0) {
+      return;
+    }
+    const previous = command == 'previous_command';
+    setNextCompletionIdx(previous);
+  }, [completions])
+  chrome.commands.onCommand.addListener(onChromeMessage);
 
   return (
     <>
@@ -104,7 +115,7 @@ const Popup = () => {
           justify-center
           items-center
           mt-10
-          animate-spin 
+          animate-spin
           "
           >
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
