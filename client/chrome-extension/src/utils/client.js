@@ -12,7 +12,8 @@ class ApiClient {
         url,
         config,
         headers = {},
-        timeout = 10000,
+        // 60s timeout (pipelines can take a while to run)
+        timeout = 60000,
       ) => {
         const setHeaders = { ... headers };
 
