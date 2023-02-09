@@ -69,7 +69,7 @@ const SingleConversationAutoResponse = () => {
             headers: new Headers({ 'content-type': 'application/json' }),
             body: JSON.stringify({
                 conversation_id: context.conversation.id,
-                use_cached: true,
+                use_cached: false,
                 platform: 'front',
                 client_id: 3,
             })
