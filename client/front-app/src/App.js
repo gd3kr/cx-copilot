@@ -87,18 +87,19 @@ const SingleConversationAutoResponse = () => {
         }).then((res) => res.json().then((parsed) => {
             setPipelineResponse(parsed);
 
-            context.createDraft({
+            context.listMessages().then((res) =>             context.createDraft({
           content: {
               body: parsed.completion,
               type: 'text'
           },
           replyOptions: {
               type: 'replyAll', // Or 'replyAll'
-              originalMessageId: messages[0].id,
+              originalMessageId: res.results[0].id,
           }
-        })
+        }))
+
         })).finally(() => setResponseLoading(false));
-  }, [context.conversation.id, messages])
+  }, [context.conversation.id])
     useEffect(() => {
 
     }, [messages])
