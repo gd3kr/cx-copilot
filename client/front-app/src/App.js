@@ -45,7 +45,7 @@ function App() {
       break;
   };
 }
-const url = process.env.REACT_APP_BACKEND_URL;
+const url = 'https://support-bef.onrender.com';
 console.log(url);
 const SingleConversationAutoResponse = () => {
    const context = useFrontContext();
@@ -70,7 +70,7 @@ const SingleConversationAutoResponse = () => {
 
 
   useEffect(() => {
-      if (context.conversation.id == null || messages.length === 0) {
+      if (context.conversation.id == null) {
           return;
       }
 
