@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Optional
 
 import openai
@@ -20,7 +22,7 @@ def check_key_decorator(func):
 
 
 class GPTCompletionBlock(CompletionBlock):
-    open_ai_key: Optional[str] = None
+    open_ai_key: str | None = None
 
     def __init__(self, open_ai_key: str, use_helicone: bool = False) -> None:
         self.open_ai_key = open_ai_key
@@ -29,10 +31,10 @@ class GPTCompletionBlock(CompletionBlock):
             openai.api_base = "https://oai.hconeai.com/v1"
 
     @check_key_decorator
-    def get_completion(self, prompt: str, max_tokens: int, temperature: int) -> str:
+    def get_completion(self, prompt: str, max_tokens: int, temperature: int, engine: str = "text-davinci-003") -> str:
         return (
             openai.Completion.create(
-                engine="text-davinci-003", prompt=prompt, max_tokens=max_tokens, temperature=temperature
+                engine=engine, prompt=prompt, max_tokens=max_tokens, temperature=temperature
             )
             .choices[0]
             .text

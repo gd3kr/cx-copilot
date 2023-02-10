@@ -1,4 +1,3 @@
 const config = {};
-// config.API_URL = 'localhost:9000';
-config.API_URL = 'https://support-bef.onrender.com';
+config.API_URL = 'http://localhost:9000';
 export default config;

@@ -5,7 +5,7 @@ build-backend = "flit.buildapi"
 [project]
 name =  "cx-copilot"
 authors = [
-    {name = "Rahul S, Tanuj Tiwari", email = "eng@livetrucks.io"},
+    {name = "Rahul S, Tanuj Tiwari", email = "rahul@caesarhq.com"},
 ]
 description = "Sample Python Project for creating a new Python Module"
 readme = "README.md"
