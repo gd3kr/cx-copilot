@@ -30,13 +30,12 @@ class TestPipeline(unittest.TestCase):
     def setUpClass(cls, open_ai_key="", pipeline_response_gen=None, score_threshold=50, examples=[]):
         cls.gpt_block = GPTCompletionBlock(open_ai_key=open_ai_key)
         cls.score_treshold = score_threshold
-        cls.pipeline_response_generator = pipeline_response_gen
         cls.example_list = examples
 
     def test_examples(self):
         for testcase in self.example_list:
             res = self._test_example(testcase)
-            self.assertGreater(self.score_treshold, int(res), f"test failed. question failure {testcase['question']}")
+            self.assertGreater(int(res), self.score_treshold, f"test failed. question failure {testcase['question']}")
 
     def _test_example(self, test_case: TestExample):
         generated_response = self.pipeline_response_generator(test_case["question"])
@@ -44,5 +43,5 @@ class TestPipeline(unittest.TestCase):
         prompt = _PROMPT.format(
             question=test_case["question"], expected_response=expected, actual_response=generated_response
         )
-        res = self.gpt_block.get_completion(prompt)
+        res = self.gpt_block.get_completion(prompt, max_tokens=300, temperature=0)
         return res

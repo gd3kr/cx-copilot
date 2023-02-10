@@ -9,4 +9,4 @@ from .blocks.vectordb import PineconeVectorDBBlock
 from .compound.compound import CXCopilot
 from .utils.eval import TestExample, TestPipeline
 
-__version__ = "0.0.9"
+__version__ = "0.0.10"
