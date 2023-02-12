@@ -62,6 +62,18 @@ var options = {
         use: [
           {
             loader: 'style-loader',
+            options: {
+              insert: (element) => {
+                setTimeout(() => {
+                  const sidebarClone = document.getElementById("copilot-sidebar-clone");
+                  if (sidebarClone && sidebarClone.shadowRoot) {
+                    sidebarClone.shadowRoot.appendChild(element);
+                  }else{
+                    console.log('sidebarClone not found')
+                  }
+                }, 1000);
+              }
+            },
           },
           {
             loader: 'css-loader',
