@@ -64,16 +64,47 @@ var options = {
             loader: "style-loader",
             options: {
               insert: (element) => {
+                // let intervalId = setInterval(() => {
+                //   const sidebarClone = document.getElementById(
+                //     "copilot-sidebar-clone"
+                //   );
+                //   if (sidebarClone && sidebarClone.shadowRoot) {
+                //     console.debug("sidebarClone found. setting styles");
+                //     sidebarClone.shadowRoot.appendChild(element);
+                //   } else {
+                //     console.debug("sidebarClone not found");
+                //   }
+                // }, 2000);
                 setTimeout(() => {
                   const sidebarClone = document.getElementById(
                     "copilot-sidebar-clone"
                   );
                   if (sidebarClone && sidebarClone.shadowRoot) {
+                    console.debug("sidebarClone found. setting styles");
                     sidebarClone.shadowRoot.appendChild(element);
                   } else {
-                    console.log("sidebarClone not found");
+                    console.debug("sidebarClone not found");
                   }
                 }, 2000);
+                chrome.runtime.onMessage.addListener(function (
+                  request,
+                  sender,
+                  sendResponse
+                ) {
+                  if (request.message === "TabUpdated") {
+                    setTimeout(() => {
+                      const sidebarClone = document.getElementById(
+                        "copilot-sidebar-clone"
+                      );
+                      if (sidebarClone && sidebarClone.shadowRoot) {
+                        console.debug("sidebarClone found. setting styles");
+                        sidebarClone.shadowRoot.appendChild(element);
+                      } else {
+                        console.debug("sidebarClone not found");
+                      }
+                    }, 10);
+                  }
+                });
               },
             },
           },

@@ -100,31 +100,30 @@ const addReplyButtonLister = () => {
 document.addEventListener("DOMContentLoaded", addReplyButtonLister);
 
 const renderDom = () => {
-  setTimeout(() => {
-    const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
-    const sidebarClone = document.createElement("div");
-    sidebarClone.id = "copilot-sidebar-clone";
-    sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
+  const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
+  const sidebarClone = document.createElement("div");
+  sidebarClone.id = "copilot-sidebar-clone";
+  sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
 
-    const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
-    shadowRoot.id = "copilot-sidebar";
+  const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
+  shadowRoot.id = "copilot-sidebar";
 
-    // Render the React component inside the shadow root
-    console.log("rendering react component");
-    ReactDOM.render(
-      <Popup
-        injectCompletion={injectCompletion}
-        url={document.location.href}
-      />,
-      shadowRoot
-    );
-  }, 500);
+  // Render the React component inside the shadow root
+  console.debug("rendering react component");
+  ReactDOM.render(
+    <Popup injectCompletion={injectCompletion} url={document.location.href} />,
+    shadowRoot
+  );
 };
 
 // Listen for Tab Updated
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === "TabUpdated") {
-    window.location.reload();
+    renderDom();
   }
 });
-document.addEventListener("DOMContentLoaded", renderDom);
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    renderDom();
+  }, 1000);
+});
