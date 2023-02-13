@@ -49,7 +49,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return;
 });
 
-
 // make a call to the API to save the actual ticket response sent by the CX agent
 const saveTicketResponse = async () => {
   // get reply text
@@ -97,8 +96,6 @@ const addReplyButtonLister = () => {
   }, 500);
 };
 
-
-
 // add a listener to the reply button once the document loads
 document.addEventListener("DOMContentLoaded", addReplyButtonLister);
 
@@ -114,11 +111,20 @@ const renderDom = () => {
 
     // Render the React component inside the shadow root
     console.log("rendering react component");
-    ReactDOM.render(<Popup
-    injectCompletion={injectCompletion}
-    url = {document.location.href}
-      />, shadowRoot);
+    ReactDOM.render(
+      <Popup
+        injectCompletion={injectCompletion}
+        url={document.location.href}
+      />,
+      shadowRoot
+    );
   }, 500);
 };
 
+// Listen for Tab Updated
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === "TabUpdated") {
+    window.location.reload();
+  }
+});
 document.addEventListener("DOMContentLoaded", renderDom);
