@@ -49,7 +49,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return;
 });
 
-
 // make a call to the API to save the actual ticket response sent by the CX agent
 const saveTicketResponse = async () => {
   // get reply text
@@ -97,28 +96,34 @@ const addReplyButtonLister = () => {
   }, 500);
 };
 
-
-
 // add a listener to the reply button once the document loads
 document.addEventListener("DOMContentLoaded", addReplyButtonLister);
 
 const renderDom = () => {
-  setTimeout(() => {
-    const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
-    const sidebarClone = document.createElement("div");
-    sidebarClone.id = "copilot-sidebar-clone";
-    sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
+  const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
+  const sidebarClone = document.createElement("div");
+  sidebarClone.id = "copilot-sidebar-clone";
+  sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
 
-    const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
-    shadowRoot.id = "copilot-sidebar";
+  const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
+  shadowRoot.id = "copilot-sidebar";
 
-    // Render the React component inside the shadow root
-    console.log("rendering react component");
-    ReactDOM.render(<Popup
-    injectCompletion={injectCompletion}
-    url = {document.location.href}
-      />, shadowRoot);
-  }, 500);
+  // Render the React component inside the shadow root
+  console.debug("rendering react component");
+  ReactDOM.render(
+    <Popup injectCompletion={injectCompletion} url={document.location.href} />,
+    shadowRoot
+  );
 };
 
-document.addEventListener("DOMContentLoaded", renderDom);
+// Listen for Tab Updated
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === "TabUpdated") {
+    renderDom();
+  }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    renderDom();
+  }, 1000);
+});
