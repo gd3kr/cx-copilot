@@ -31,10 +31,10 @@ class GPTCompletionBlock(CompletionBlock):
             openai.api_base = "https://oai.hconeai.com/v1"
 
     @check_key_decorator
-    def get_completion(self, prompt: str, max_tokens: int, temperature: int) -> str:
+    def get_completion(self, prompt: str, max_tokens: int, temperature: int, engine: str = "text-davinci-003") -> str:
         return (
             openai.Completion.create(
-                engine="text-davinci-003", prompt=prompt, max_tokens=max_tokens, temperature=temperature
+                engine=engine, prompt=prompt, max_tokens=max_tokens, temperature=temperature
             )
             .choices[0]
             .text

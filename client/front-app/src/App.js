@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useFrontContext} from "./providers/frontContextProvider";
-import {Accordion, AccordionSection, PluginFooter, PluginHeader, PluginLayout} from "@frontapp/ui-kit";
+import {Accordion, AccordionSection, PluginFooter, PluginHeader, PluginLayout, Skeleton} from "@frontapp/ui-kit";
 import {useEffect, useState} from "react";
 import {useHotkeys} from "react-hotkeys-hook";
 
@@ -45,12 +45,13 @@ function App() {
       break;
   };
 }
-const url = process.env.REACT_APP_BACKEND_URL;
+const url = 'https://support-bef.onrender.com';
 console.log(url);
 const SingleConversationAutoResponse = () => {
    const context = useFrontContext();
   const [open, setIsOpen] = useState(true);
   const [pipelineResponse, setPipelineResponse] = useState(null);
+  const [responseLoading, setResponseLoading] = useState(false)
   const [messages, setMessages] = useState([]);
   useHotkeys('ctrl+s', () => {
       fetch(`${url}/index_conversation`, {
@@ -63,34 +64,47 @@ const SingleConversationAutoResponse = () => {
         })
   }, [context])
 
+    useEffect(() => {
+        context.listMessages().then((res) => setMessages(res.results))
+    }, [context])
+
+
   useEffect(() => {
+      if (context.conversation.id == null) {
+          return;
+      }
+
+      setResponseLoading(true);
         const httpResponse = fetch(`${url}/get_auto_response`, {
             method: 'POST',
             headers: new Headers({ 'content-type': 'application/json' }),
             body: JSON.stringify({
                 conversation_id: context.conversation.id,
-                use_cached: true,
+                use_cached: false,
                 platform: 'front',
                 client_id: 3,
             })
         }).then((res) => res.json().then((parsed) => {
             setPipelineResponse(parsed);
-            context.createDraft({
+
+            context.listMessages().then((res) =>             context.createDraft({
           content: {
               body: parsed.completion,
               type: 'text'
           },
           replyOptions: {
               type: 'replyAll', // Or 'replyAll'
-              originalMessageId: messages[0].id,
+              originalMessageId: res.results[0].id,
           }
-        })
-        }));
+        }))
+
+        })).finally(() => setResponseLoading(false));
   }, [context.conversation.id])
     useEffect(() => {
 
     }, [messages])
    return <div className="App-sidebar-body">
+       {responseLoading? <Skeleton variant={"dark"}/>:
     <Accordion>
         <AccordionSection isOpen={open} onSectionToggled={setIsOpen} id={1} title={'Summary'}>
             {pipelineResponse?.summary}
@@ -98,7 +112,7 @@ const SingleConversationAutoResponse = () => {
         <AccordionSection id={2} title={'Citations'}>
             {pipelineResponse?.citations}
         </AccordionSection>
-    </Accordion>
+    </Accordion>}
    </div>
 }
 export default App;

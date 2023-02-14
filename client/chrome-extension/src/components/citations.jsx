@@ -10,9 +10,10 @@ const Citations = (props) => {
     <div
       className="bg-white
 		mt-2
-		border border-gray-200 rounded-md shadow-sm divide-y divide-gray-200"
+		border border-gray-200 rounded-md shadow-sm divide-y divide-gray-200
+    "
     >
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:py-32 lg:py-40 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-4">
         {/* <div className="mx-auto max-w-4xl divide-y divide-gray-900/10"> */}
         <dl className="divide-y divide-gray-900/10">
           <Disclosure
