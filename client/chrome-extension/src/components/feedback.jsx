@@ -14,7 +14,7 @@ const Feedback = (props) => {
     await API.post("/completions/rate", {
       client_id: clientId,
       ticket_id: ticketId,
-      pipeline_id: completionIdx + 1, // pipeline_id starts at 1 not 0
+      pipeline_id: completion.pipeline_id,
       version: version,
       rating: rating,
       completion: completion.text,
