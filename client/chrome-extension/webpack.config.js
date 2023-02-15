@@ -64,28 +64,32 @@ var options = {
             loader: "style-loader",
             options: {
               insert: (element) => {
-                // let intervalId = setInterval(() => {
-                //   const sidebarClone = document.getElementById(
-                //     "copilot-sidebar-clone"
-                //   );
-                //   if (sidebarClone && sidebarClone.shadowRoot) {
-                //     console.debug("sidebarClone found. setting styles");
-                //     sidebarClone.shadowRoot.appendChild(element);
-                //   } else {
-                //     console.debug("sidebarClone not found");
-                //   }
-                // }, 2000);
-                setTimeout(() => {
+                let intervalId = setInterval(() => {
                   const sidebarClone = document.getElementById(
                     "copilot-sidebar-clone"
                   );
                   if (sidebarClone && sidebarClone.shadowRoot) {
-                    console.debug("sidebarClone found. setting styles");
+                    // console.debug("sidebarClone found. setting styles");
                     sidebarClone.shadowRoot.appendChild(element);
+                    clearInterval(intervalId);
                   } else {
-                    console.debug("sidebarClone not found");
+                    // console.debug("sidebarClone not found");
                   }
-                }, 2000);
+                }, 200);
+                // setTimeout(() => {
+                //   let timer = setInterval(() => {
+                //     const sidebarClone = document.getElementById(
+                //       "copilot-sidebar-clone"
+                //     );
+                //     if (sidebarClone && sidebarClone.shadowRoot) {
+                //       console.debug("sidebarClone found. setting styles");
+                //       sidebarClone.shadowRoot.appendChild(element);
+                //       clearInterval(timer);
+                //     } else {
+                //       console.debug("sidebarClone not found");
+                //     }
+                //   }, 2000);
+                // }, 2000);
                 chrome.runtime.onMessage.addListener(function (
                   request,
                   sender,
@@ -102,7 +106,7 @@ var options = {
                       } else {
                         console.debug("sidebarClone not found");
                       }
-                    }, 10);
+                    }, 100);
                   }
                 });
               },

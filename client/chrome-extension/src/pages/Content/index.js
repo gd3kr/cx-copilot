@@ -109,7 +109,7 @@ const renderDom = () => {
   shadowRoot.id = "copilot-sidebar";
 
   // Render the React component inside the shadow root
-  console.debug("rendering react component");
+  console.debug("Injecting CX Copilot sidebar...");
   ReactDOM.render(
     <Popup injectCompletion={injectCompletion} url={document.location.href} />,
     shadowRoot
