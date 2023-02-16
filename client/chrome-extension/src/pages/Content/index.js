@@ -23,6 +23,10 @@ const API = new ApiClient();
 
 // inject copilot suggestion into the reply input box
 const injectCompletion = (platform, text) => {
+  if (text === null || text === undefined || text.trim().length === 0) {
+    return;
+  }
+
   if (platform == Platforms.HelpScout) {
 
     // Get the number of sections with class `js-thread-content` in the ticket.
