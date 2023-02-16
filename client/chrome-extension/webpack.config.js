@@ -6,7 +6,6 @@ var webpack = require("webpack"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
   TerserPlugin = require("terser-webpack-plugin");
 var { CleanWebpackPlugin } = require("clean-webpack-plugin");
-
 const ASSET_PATH = process.env.ASSET_PATH || "/";
 
 var alias = {
@@ -69,27 +68,10 @@ var options = {
                     "copilot-sidebar-clone"
                   );
                   if (sidebarClone && sidebarClone.shadowRoot) {
-                    // console.debug("sidebarClone found. setting styles");
                     sidebarClone.shadowRoot.appendChild(element);
                     clearInterval(intervalId);
-                  } else {
-                    // console.debug("sidebarClone not found");
                   }
                 }, 200);
-                // setTimeout(() => {
-                //   let timer = setInterval(() => {
-                //     const sidebarClone = document.getElementById(
-                //       "copilot-sidebar-clone"
-                //     );
-                //     if (sidebarClone && sidebarClone.shadowRoot) {
-                //       console.debug("sidebarClone found. setting styles");
-                //       sidebarClone.shadowRoot.appendChild(element);
-                //       clearInterval(timer);
-                //     } else {
-                //       console.debug("sidebarClone not found");
-                //     }
-                //   }, 2000);
-                // }, 2000);
                 chrome.runtime.onMessage.addListener(function (
                   request,
                   sender,
@@ -102,7 +84,7 @@ var options = {
                       );
                       if (sidebarClone && sidebarClone.shadowRoot) {
                         console.debug("sidebarClone found. setting styles");
-                        sidebarClone.shadowRoot.appendChild(element);
+                          sidebarClone.shadowRoot.appendChild(element);
                       } else {
                         console.debug("sidebarClone not found");
                       }
