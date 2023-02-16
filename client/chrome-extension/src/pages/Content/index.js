@@ -33,6 +33,11 @@ const injectCompletion = (platform, text) => {
       return;
     }
 
+    const customerName = document.querySelector('.c-profile__name')?.textContent;
+
+    const prefix = `Hey ${customerName},\n\nThanks so much for taking the time to join our beta and start sending feedback :)\n\n`
+    const suffix = `\n\nWarmly,\nAngie`
+
     // Clicks the "Reply" button so that reply textbox becomes visible
     document.getElementById(ReplyButtonIds.HelpScout).click();
     // Timeout 0.5 seconds because the reply textbox ("redactor_redactor redactor_editor")
@@ -41,7 +46,7 @@ const injectCompletion = (platform, text) => {
     setTimeout(() => {
       document.getElementsByClassName(
         ReplyTextboxClassNames.HelpScout
-      )[0].innerText = text;
+      )[0].innerText = prefix + text + suffix;
     }, 500);
   }
 };
