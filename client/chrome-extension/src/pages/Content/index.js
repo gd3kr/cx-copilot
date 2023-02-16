@@ -24,6 +24,15 @@ const API = new ApiClient();
 // inject copilot suggestion into the reply input box
 const injectCompletion = (platform, text) => {
   if (platform == Platforms.HelpScout) {
+
+    // Get the number of sections with class `js-thread-content` in the ticket.
+    // This is used to determine number of human messages in the ticket
+    const sections = document.querySelectorAll('section.js-thread-content');
+    // If there are more than 1 human messages, don't inject the completion
+    if (sections.length > 1) {
+      return;
+    }
+
     // Clicks the "Reply" button so that reply textbox becomes visible
     document.getElementById(ReplyButtonIds.HelpScout).click();
     // Timeout 0.5 seconds because the reply textbox ("redactor_redactor redactor_editor")
