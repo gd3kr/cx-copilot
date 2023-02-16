@@ -6,7 +6,6 @@ var webpack = require("webpack"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
   TerserPlugin = require("terser-webpack-plugin");
 var { CleanWebpackPlugin } = require("clean-webpack-plugin");
-
 const ASSET_PATH = process.env.ASSET_PATH || "/";
 
 var alias = {
@@ -64,28 +63,15 @@ var options = {
             loader: "style-loader",
             options: {
               insert: (element) => {
-                // let intervalId = setInterval(() => {
-                //   const sidebarClone = document.getElementById(
-                //     "copilot-sidebar-clone"
-                //   );
-                //   if (sidebarClone && sidebarClone.shadowRoot) {
-                //     console.debug("sidebarClone found. setting styles");
-                //     sidebarClone.shadowRoot.appendChild(element);
-                //   } else {
-                //     console.debug("sidebarClone not found");
-                //   }
-                // }, 2000);
-                setTimeout(() => {
+                let intervalId = setInterval(() => {
                   const sidebarClone = document.getElementById(
                     "copilot-sidebar-clone"
                   );
                   if (sidebarClone && sidebarClone.shadowRoot) {
-                    console.debug("sidebarClone found. setting styles");
                     sidebarClone.shadowRoot.appendChild(element);
-                  } else {
-                    console.debug("sidebarClone not found");
+                    clearInterval(intervalId);
                   }
-                }, 2000);
+                }, 200);
                 chrome.runtime.onMessage.addListener(function (
                   request,
                   sender,
@@ -98,11 +84,11 @@ var options = {
                       );
                       if (sidebarClone && sidebarClone.shadowRoot) {
                         console.debug("sidebarClone found. setting styles");
-                        sidebarClone.shadowRoot.appendChild(element);
+                          sidebarClone.shadowRoot.appendChild(element);
                       } else {
                         console.debug("sidebarClone not found");
                       }
-                    }, 10);
+                    }, 100);
                   }
                 });
               },

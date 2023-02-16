@@ -112,13 +112,16 @@ const renderDom = () => {
   const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
   const sidebarClone = document.createElement("div");
   sidebarClone.id = "copilot-sidebar-clone";
+
+  if (document.getElementById("copilot-sidebar-clone")) {
+    return;
+  }
   sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
 
   const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
   shadowRoot.id = "copilot-sidebar";
 
-  // Render the React component inside the shadow root
-  console.debug("rendering react component");
+  console.debug("Injecting CX Copilot sidebar...");
   ReactDOM.render(
     <Popup injectCompletion={injectCompletion} url={document.location.href} />,
     shadowRoot
