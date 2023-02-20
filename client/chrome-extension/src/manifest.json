@@ -13,7 +13,7 @@
   "icons": {
     "128": "icon-128.png"
   },
-  "permissions": ["tabs", "activeTab", "storage"],
+  "permissions": ["tabs", "storage"],
   "content_scripts": [
     {
       "matches": [
