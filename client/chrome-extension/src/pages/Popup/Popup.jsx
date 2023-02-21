@@ -40,7 +40,7 @@ const Popup = (props) => {
   };
 
   const triggerInjectCompletion = (idx) => {
-    props.injectCompletion(Platforms.HelpScout, completions?.[idx].text)
+    props.injectCompletion(platform, completions?.[idx].text)
     return;
 
   };

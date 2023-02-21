@@ -147,7 +147,7 @@ const renderDom = () => {
     sidebar = document.getElementsByClassName("c-app-layout__col")[1];
     sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
   } else if (url.includes("zendesk")) {
-    platform = Platforms.Zendesk;
+    platform = Platforms.ZenDesk;
     sidebar = document.querySelectorAll("[id=undefined--primary-pane]")[1];
     const parentGridColumnsStyle = sidebar.parentNode.style.gridTemplateColumns;
     const firstColumnStyle = parentGridColumnsStyle.split(" ")[0];
