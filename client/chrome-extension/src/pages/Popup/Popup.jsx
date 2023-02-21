@@ -18,8 +18,10 @@ import "@fontsource/inter/700.css";
 
 
 const Popup = (props) => {
+  
+  const { platform, url, injectCompletion } = props;
+
   const [clientId, setClientId] = useState(null);
-  const [platform, setPlatform] = useState(null);
   const [ticketId, setTicketId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [completions, setCompletions] = useState([]);
@@ -40,7 +42,7 @@ const Popup = (props) => {
   };
 
   const triggerInjectCompletion = (idx) => {
-    props.injectCompletion(platform, completions?.[idx].text)
+    injectCompletion(platform, completions?.[idx].text)
     return;
 
   };
@@ -49,9 +51,7 @@ const Popup = (props) => {
   useEffect(async () => {
     const clientIdFromStorage = await getClientIdFromStorage();
     setClientId(clientIdFromStorage);
-    const p = getPlatformFromUrl(props.url);
-    setPlatform(p);
-    const t = getTicketIdFromPlatformAndUrl(p, props.url);
+    const t = getTicketIdFromPlatformAndUrl(platform, url);
     setTicketId(t);
   }, []);
 
