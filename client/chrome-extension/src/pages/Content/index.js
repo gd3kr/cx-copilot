@@ -40,8 +40,8 @@ const injectCompletion = (platform, text) => {
     const customerName = document.querySelector('.c-profile__name')?.textContent;
     const firstName = customerName?.split(' ')[0];
 
-    const prefix = `Hey ${firstName},\n\nThanks so much for taking the time to join our beta and start sending feedback :)\n\n`
-    const suffix = `\n\nWarmly,\nAngie`
+    const prefix = `Hey ${firstName}\n\n`
+    const suffix = `\n\n Thanks,\nJake`
 
     // Clicks the "Reply" button so that reply textbox becomes visible
     document.getElementById(ReplyButtonIds.HelpScout).click();
@@ -140,6 +140,7 @@ const renderDom = () => {
 
 // Listen for Tab Updated
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log("Tab Updated ====>")
   if (request.message === "TabUpdated") {
     renderDom();
   }
