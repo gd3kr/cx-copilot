@@ -138,9 +138,8 @@ const renderDom = () => {
   );
 };
 
-// Listen for Tab Updated
+// Listen for TabUpdated
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log("Tab Updated ====>")
   if (request.message === "TabUpdated") {
     renderDom();
   }
