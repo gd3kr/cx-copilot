@@ -4,6 +4,7 @@ import {
   StorageVariables
 } from "./constants"
 import { getHelpScoutTicketId } from "./helpscout";
+import { getZenDeskTicketId } from "./zendesk";
 
 
 export const clearClientIdInStorage = () => {
@@ -40,5 +41,7 @@ export const getPlatformFromUrl = (url) => {
 export const getTicketIdFromPlatformAndUrl = (platform, url) => {
   if (platform == Platforms.HelpScout) {
     return getHelpScoutTicketId(url);
+  } else if (platform == Platforms.ZenDesk) {
+    return getZenDeskTicketId(url);
   } else return null;
 }
