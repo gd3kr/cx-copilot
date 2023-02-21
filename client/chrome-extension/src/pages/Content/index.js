@@ -53,6 +53,9 @@ const injectCompletion = (platform, text) => {
         ReplyTextboxClassNames.HelpScout
       )[0].innerText = prefix + text + suffix;
     }, 500);
+  } else if (platform == Platforms.ZenDesk) {
+    const inputBox = document.querySelectorAll('[role="textbox"]')[0];
+    inputBox.innerText = text;
   }
 };
 
@@ -133,12 +136,18 @@ const renderDom = () => {
 
   let sidebar;
 
-  // Get document url
+  // Get document url to get platform
   const url = document.location.href;
+
+  // Prepare for injection based on platform and gather other required data
+  let platform;
+
   if (url.includes("helpscout")) {
+    platform = Platforms.HelpScout;
     sidebar = document.getElementsByClassName("c-app-layout__col")[1];
     sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
   } else if (url.includes("zendesk")) {
+    platform = Platforms.Zendesk;
     sidebar = document.querySelectorAll("[id=undefined--primary-pane]")[1];
     const parentGridColumnsStyle = sidebar.parentNode.style.gridTemplateColumns;
     const firstColumnStyle = parentGridColumnsStyle.split(" ")[0];
@@ -151,7 +160,7 @@ const renderDom = () => {
 
   console.debug("Injecting CX Copilot sidebar...");
   ReactDOM.render(
-    <Popup injectCompletion={injectCompletion} url={document.location.href} />,
+    <Popup injectCompletion={injectCompletion} platform={platform} url={document.location.href} />,
     shadowRoot
   );
 };
