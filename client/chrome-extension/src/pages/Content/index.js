@@ -109,10 +109,13 @@ const addSendButtonListener = () => {
 const addReplyButtonLister = () => {
   // Timeout 0.5 seconds because the DOM element isn't visibile right away.
   // We have to wait for the DOM elements to become visible
-  setTimeout(() => {
-    const replyButton = document.getElementById(ReplyButtonIds.HelpScout);
-    replyButton.addEventListener("click", addSendButtonListener);
-  }, 500);
+  const url = document.location.href;
+  if (url.includes("helpscout")) {
+    setTimeout(() => {
+      const replyButton = document.getElementById(ReplyButtonIds.HelpScout);
+      replyButton.addEventListener("click", addSendButtonListener);
+    }, 500);
+  }
 };
 
 // add a listener to the reply button once the document loads
