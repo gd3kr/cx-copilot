@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-import asyncio
-
 import discord
-
-bot = discord.Bot()
 
 from cx_copilot import CXCopilot
 

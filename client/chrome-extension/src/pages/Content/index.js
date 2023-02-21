@@ -40,7 +40,7 @@ const injectCompletion = (platform, text) => {
     const customerName = document.querySelector('.c-profile__name')?.textContent;
     const firstName = customerName?.split(' ')[0];
 
-    const prefix = `Hey ${firstName}\n\n`
+    const prefix = `Hey ${firstName},\n\n`
     const suffix = `\n\n Thanks,\nJake`
 
     // Clicks the "Reply" button so that reply textbox becomes visible
