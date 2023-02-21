@@ -119,14 +119,29 @@ const addReplyButtonLister = () => {
 document.addEventListener("DOMContentLoaded", addReplyButtonLister);
 
 const renderDom = () => {
-  const sidebar = document.getElementsByClassName("c-app-layout__col")[1];
+
+  const copilotSidebarCloneId = "copilot-sidebar-clone";
+
+  if (document.getElementById(copilotSidebarCloneId)) {
+    return;
+  }
   const sidebarClone = document.createElement("div");
   sidebarClone.id = "copilot-sidebar-clone";
 
-  if (document.getElementById("copilot-sidebar-clone")) {
-    return;
+  let sidebar;
+
+  // Get document url
+  const url = document.location.href;
+  if (url.includes("helpscout")) {
+    sidebar = document.getElementsByClassName("c-app-layout__col")[1];
+    sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
+  } else if (url.includes("zendesk")) {
+    sidebar = document.querySelectorAll("[id=undefined--primary-pane]")[1];
+    const parentGridColumnsStyle = sidebar.parentNode.style.gridTemplateColumns;
+    const firstColumnStyle = parentGridColumnsStyle.split(" ")[0];
+    sidebar.parentNode.style.gridTemplateColumns = `${parentGridColumnsStyle} ${firstColumnStyle}`;
+    sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
   }
-  sidebar.parentNode.insertBefore(sidebarClone, sidebar.nextSibling);
 
   const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
   shadowRoot.id = "copilot-sidebar";
