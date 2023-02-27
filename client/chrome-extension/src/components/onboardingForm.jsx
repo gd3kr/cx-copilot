@@ -4,9 +4,10 @@ import '../styles/globals.css'
 
 const Onboarding = (props) => {
 
+
   const { setClientId } = props;
 
-  const [id, setId] = useState(null);
+  const [id, setId] = useState('');
 
   return (
     <div className="bg-white shadow sm:rounded-lg">
@@ -21,8 +22,30 @@ const Onboarding = (props) => {
               type="clientId"
               name="clientId"
               id="clientId"
+              value={id}
+              onKeyDown={(e) => {
+                // hacky solution for isolating keys from parent DOM
+                if (e.key === 'Backspace') {
+                  setId(id.slice(0, -1))
+                } else if (e.key === 'Enter') {
+                  setClientId(id)
+                  setClientIdInStorage(id)
+                } 
+                // else if meta key is pressed
+                else if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || e.key === 'Tab') {
+                  return;
+                }
+                else {
+
+                setId(id + e.key)
+                ; e.preventDefault(); e.stopPropagation(); }}
+              }
+                // set the value of target
+
+              onKeyUp={(e) => {e.preventDefault(); e.stopPropagation();}}
+              
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              onChange={event => setId(event.currentTarget.value)}
+              
             />
           </div>
           <button

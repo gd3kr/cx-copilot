@@ -28,20 +28,20 @@ const injectCompletion = (platform, text) => {
   }
 
   if (platform == Platforms.HelpScout) {
-
     // Get the number of sections with class `js-thread-content` in the ticket.
     // This is used to determine number of human messages in the ticket
-    const sections = document.querySelectorAll('section.js-thread-content');
+    const sections = document.querySelectorAll("section.js-thread-content");
     // If there are more than 1 human messages, don't inject the completion
     if (sections.length > 1) {
       return;
     }
 
-    const customerName = document.querySelector('.c-profile__name')?.textContent;
-    const firstName = customerName?.split(' ')[0];
+    const customerName =
+      document.querySelector(".c-profile__name")?.textContent;
+    const firstName = customerName?.split(" ")[0];
 
-    const prefix = `Hey ${firstName},\n\n`
-    const suffix = `\n\n Thanks,\nJake`
+    const prefix = `Hey ${firstName},\n\n`;
+    const suffix = `\n\n Thanks,\nJake`;
 
     // Clicks the "Reply" button so that reply textbox becomes visible
     document.getElementById(ReplyButtonIds.HelpScout).click();
@@ -125,7 +125,6 @@ const addReplyButtonLister = () => {
 document.addEventListener("DOMContentLoaded", addReplyButtonLister);
 
 const renderDom = () => {
-
   const copilotSidebarCloneId = "copilot-sidebar-clone";
 
   if (document.getElementById(copilotSidebarCloneId)) {
@@ -158,9 +157,15 @@ const renderDom = () => {
   const shadowRoot = sidebarClone.attachShadow({ mode: "open" });
   shadowRoot.id = "copilot-sidebar";
 
+
+
   console.debug("Injecting CX Copilot sidebar...");
   ReactDOM.render(
-    <Popup injectCompletion={injectCompletion} platform={platform} url={document.location.href} />,
+    <Popup
+      injectCompletion={injectCompletion}
+      platform={platform}
+      url={document.location.href}
+    />,
     shadowRoot
   );
 };
